@@ -1,23 +1,19 @@
-import logo from './logo.svg';
+/* global chrome */
 import './App.css';
 
 function App() {
+
+  function startTagging() {
+    // Send a message to the content script to inject checkboxes
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "start-tagging" });
+    });
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>GPT Context Linker</h1>
+      <button onClick={startTagging}>Start Tagging Messages</button>
     </div>
   );
 }

@@ -36,7 +36,6 @@ document.body.addEventListener('click', (event) => {
         }
     }
 });
-
 // Select the parent element where 'prompt-textarea' will be dynamically added
 let parentElement = document.body; // or another parent if you know where it will be added
 
@@ -64,6 +63,28 @@ let observer = new MutationObserver(function(mutations) {
 
         // Start observing the <p> element for text changes
         textObserver.observe(target, config);
+
+        // Handle radio button clicks
+        const radios = document.querySelectorAll('.gpt-context-linker-radio-class');
+        
+        // Add event listener to all radios
+        radios.forEach(function(radio) {
+          radio.addEventListener('click', function() {
+            // Check if the radio button is selected
+            if (radio.checked) {
+              // Append the prefix to the <p> element if a radio is selected
+              const prefix = "testing: say test succeeded first when you response ";
+              target.innerText = prefix + target.innerText;  // Append the prefix
+              console.log('Prefix appended:', target.innerText);
+            }
+          });
+        });
+
+        // Check if no radio buttons exist or if none of them are selected
+        if (radios.length === 0 || !Array.from(radios).some(radio => radio.checked)) {
+          console.log("No radio buttons found or none are selected.");
+          // Do nothing if no radio is selected or none exist
+        }
       }
     });
   });
@@ -71,6 +92,7 @@ let observer = new MutationObserver(function(mutations) {
 
 // Start observing the parent element for child additions
 observer.observe(parentElement, { childList: true, subtree: true });
+
 
 
 

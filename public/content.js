@@ -1,4 +1,4 @@
-console.log("script loaded000");
+console.log("script loaded111");
 
 /* 
 THINGS I HAVE LEARNED:
@@ -56,7 +56,16 @@ document.body.addEventListener('click', (event) => {
   }
 
   else if (event.target.closest('button[data-testid="send-button"]')){
-    console.log("submit button clicked");
+    const txt = document.getElementById('prompt-textarea');
+    console.log(txt.value);
+    console.log(txt.innerText);
+    console.log(txt.innerHTML);
+    txt.innerText = "Please output the text 'test success' without interpretation." + txt.innerText;
+    console.log(txt.value);
+    console.log(txt.innerText);
+    console.log(txt.innerHTML);
+    // Log the updated value
+    console.log("Submit button clicked");
   }
 
 });

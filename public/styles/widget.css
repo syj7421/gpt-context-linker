@@ -1,0 +1,29 @@
+.widget {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 300px;
+    background-color: blue;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 9999;
+  }
+  
+  .widget .close-btn {
+    background: red;
+    border: none;
+    cursor: pointer;
+    color: black;
+  }
+  
+  .widget-content {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+  }
+  
+  .gpt-checkbox {
+    margin-left: 10px;
+  }
+  

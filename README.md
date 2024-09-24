@@ -1,3 +1,5 @@
+Figma design prototype: https://www.figma.com/design/seAjXoQIg1n7bRPzVmvwX3/GPT-Context-Linker-Extension?node-id=0-1&t=Du0bJujzovLeULhm-1
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

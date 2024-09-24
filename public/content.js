@@ -1,4 +1,4 @@
-console.log("script loaded111");
+console.log("script loaded333");
 
 /* 
 THINGS I HAVE LEARNED:
@@ -29,14 +29,14 @@ function addRadioButton() {
   if (gptMsg.length > 0) {
       gptMsg.forEach((e, idx) => {
           // Create and insert radio buttons if not already present
-          if (!e.querySelector('input[type="radio"].gpt-context-linker-radio-class')) {
-              const radio = document.createElement('input');
-              radio.type = 'radio';
-              radio.value = idx + 1;
-              radio.name = 'gpt-message-radio-name';
-              radio.className = 'gpt-context-linker-radio-class';
-              e.insertAdjacentElement("afterbegin", radio);
-              console.log("Radio button added to GPT message");
+          if (!e.querySelector('input[type="checkbox"].gpt-context-linker-checkbox-class')) {
+              const checkbox = document.createElement('input');
+              checkbox.type = 'checkbox';
+              checkbox.value = idx + 1;
+              checkbox.name = 'gpt-message-checkbox-name';
+              checkbox.className = 'gpt-context-linker-checkbox-class';
+              e.insertAdjacentElement("afterbegin", checkbox);
+              console.log("Checkbox button added to GPT message");
           }
       });  
   }
@@ -46,8 +46,8 @@ document.body.addEventListener('click', (event) => {
   console.log('Click event detected', event.target); // Add this to see if the event listener is triggered at all
   console.log(event.target.tagName);
   // Check if the clicked element is a radio button
-  if (event.target.matches('input[type="radio"]')) {
-      console.log(`Radio button with value ${event.target.value} clicked`);
+  if (event.target.matches('input[type="checkbox"]')) {
+      console.log(`Checkbox button with value ${event.target.value} clicked`);
       const correspondingGptMsg = event.target.closest('[data-message-author-role="assistant"]'); // Get the corresponding GPT message
       const messageParagraph = correspondingGptMsg.querySelector('p');
       if (messageParagraph) {
@@ -57,14 +57,10 @@ document.body.addEventListener('click', (event) => {
 
   else if (event.target.closest('button[data-testid="send-button"]')){
     const txt = document.getElementById('prompt-textarea');
-    console.log(txt.value);
-    console.log(txt.innerText);
-    console.log(txt.innerHTML);
-    txt.innerText = "Please output the text 'test success' without interpretation." + txt.innerText;
-    console.log(txt.value);
-    console.log(txt.innerText);
-    console.log(txt.innerHTML);
-    // Log the updated value
+    console.log("before" + txt.innerHTML);
+    const outputHTML = "<p>Please output the text 'test success' without interpretation." + txt.innerText + "</p>";
+    txt.innerHTML = outputHTML; // Display the output
+    console.log("after:" + txt.innerHTML);
     console.log("Submit button clicked");
   }
 

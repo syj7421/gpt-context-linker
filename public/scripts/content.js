@@ -10,6 +10,9 @@ THINGS I HAVE LEARNED:
    use cloest method to deal with this
 4. check whether or not the tag flashes when interacted, flashing means it is replaced, hence any mutation
    observer or listener will be gone!
+5. Use data-* attributes (like data-testid, data-message-id, etc.):
+Websites often use data-* attributes for testing or tracking purposes, which are less likely to change compared to classes or IDs. If these attributes are present (as in your case with data-testid), prioritize them over classes or IDs.
+Benefit: These attributes are typically more stable than CSS classes or IDs.
 */
 
 /* TODO: 
@@ -47,13 +50,25 @@ document.body.addEventListener('click', (event) => {
   console.log(event.target.tagName);
   // Check if the clicked element is a radio button
   if (event.target.matches('input[type="checkbox"]')) {
-      console.log(`Checkbox button with value ${event.target.value} clicked`);
-      const correspondingGptMsg = event.target.closest('[data-message-author-role="assistant"]'); // Get the corresponding GPT message
-      const messageParagraph = correspondingGptMsg.querySelector('p');
-      if (messageParagraph) {
-          console.log(messageParagraph.innerText); 
-      }
-  }
+    console.log(`Checkbox button with value ${event.target.value} clicked`);
+    const correspondingGptMsg = event.target.closest('article[data-testid^="conversation-turn-"]'); // Get the corresponding GPT message
+    const msgElements = correspondingGptMsg.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code'); // Select relevant elements
+    
+    const newWidgetItem = document.createElement('div');
+    
+    msgElements.forEach(e => {
+        const clonedElement = e.cloneNode(true); // Clone to avoid moving elements
+        newWidgetItem.appendChild(clonedElement);
+    });
+
+    const widget = document.querySelector(".widget"); // Correct selector, ensure it's class or ID
+
+    if (widget) {
+        widget.appendChild(newWidgetItem);
+    } else {
+        console.error("Widget not found!");
+    }
+}
 
   else if (event.target.closest('button[data-testid="send-button"]')){
     const txt = document.getElementById('prompt-textarea');
@@ -71,96 +86,6 @@ document.body.addEventListener('click', (event) => {
 
 
 
-
-
-
-
-// // Create a MutationObserver instance to detect when the textBox is added
-// let observer = new MutationObserver(function(mutations) {
-//   mutations.forEach(function(mutation) {
-//     mutation.addedNodes.forEach(function(node) {
-//       // Check if the added node is the textBox
-//       if (node.id === 'prompt-textarea') {
-//         console.log("textbox found");
-        
-//         let target = node.getElementsByTagName('p')[0]; // Access first <p> element inside the textBox
-        
-//         // Create another observer to monitor changes in the <p> element inside textBox
-//         let textObserver = new MutationObserver(function(mutations) {
-//           mutations.forEach(function(mutation) {
-//             if (mutation.type === 'childList' || mutation.type === 'characterData') {
-//               console.log('Text changed to1:', target.innerText);
-//             }
-//           });
-//         });
-
-//         // Define the configuration for the text observer
-//         let config = { childList: true, subtree: true, characterData: true };
-
-//         // Start observing the <p> element for text changes
-//         textObserver.observe(target, config);
-
-//         // Handle radio button clicks
-//         const radios = document.querySelectorAll('.gpt-context-linker-radio-class');
-        
-//         // Add event listener to all radios
-//         radios.forEach(function(radio) {
-//           radio.addEventListener('click', function() {
-//             // Check if the radio button is selected
-//             if (radio.checked) {
-//               // Append the prefix to the <p> element if a radio is selected
-//               const prefix = "testing: say test succeeded first when you response ";
-//               target.innerText = prefix + target.innerText;  // Append the prefix
-//               console.log('Prefix appended:', target.innerText);
-//             }
-//             else{
-//               console.log("prefix not appended");
-//             }
-//           });
-//         });
-
-//         // Check if no radio buttons exist or if none of them are selected
-//         if (radios.length === 0 || !Array.from(radios).some(radio => radio.checked)) {
-//           console.log("No radio buttons found or none are selected.");
-//           // Do nothing if no radio is selected or none exist
-//         }
-//       }
-//     });
-//   });
-// });
-
-// // Start observing the parent element for child additions
-// observer.observe(document.body, { childList: true, subtree: true });
-
-
-
-
-
-
-
-// things to do with submit button
-// // Flag to track if the submit button listener is added
-// let isListenerAdded = false;
-
-// // MutationObserver to detect the submit button
-// const buttonObserver = new MutationObserver((mutations) => {
-//     mutations.forEach((mutation) => {
-//         if (mutation.addedNodes.length > 0) {
-//             const submitButton = document.querySelector('button[data-testid="send-button"]');
-//             if (submitButton && !isListenerAdded) {
-//                 isListenerAdded = true; 
-
-//             } else if (submitButton && isListenerAdded) {
-//                 submitButton.addEventListener('click', function() {
-//                   const textBox = document.getElementById('prompt-textarea');
-//                   console.log(textBox.getElementsByTagName('p').value);
-//                   console.log("submit button clicked");
-//               });
-//             }
-//         }
-//     });
-// });
-// buttonObserver.observe(document.body, { childList: true, subtree: true });
 
 
 

@@ -4,7 +4,7 @@ function createWidget() {
     widget.className = 'widget';
     widget.innerHTML = `
       <button class="close-btn">X</button>
-      <div class="widget-content">this is a widget</div>
+      
     `;
   
     document.body.appendChild(widget);
@@ -34,14 +34,6 @@ function createWidget() {
     document.addEventListener('mouseup', () => {
       isDragging = false;
     });
-  }
-  
-  // Add content to the widget
-  function addToWidget(content) {
-    const widgetContent = document.querySelector('.widget-content');
-    const newItem = document.createElement('p');
-    newItem.textContent = content;
-    widgetContent.appendChild(newItem);
   }
   
   // Initialize the widget

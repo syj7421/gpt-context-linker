@@ -2,10 +2,17 @@
   "manifest_version": 3,
   "name": "GPT Context Linker",
   "version": "1.0",
+  "permissions": [
+    "storage"
+  ],
   "description": "",
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
   "content_scripts": [  
     {
-      "js": ["content.js"],
+      "js": ["scripts/content.js", "scripts/widget.js"], 
+      "css": ["styles/widget.css", "styles/content.css"],
       "matches": [
         "https://chatgpt.com/*"
       ]

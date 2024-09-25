@@ -1,0 +1,29 @@
+.floatingBox {
+    position: fixed;
+    right: 0.5%;
+    top: 8%;
+    width: 15%;
+    background-color:hsla(0,0%,94%,.9);
+    border: 1px solid hsla(0,0%,94%,.9);
+    border-radius: 3%;
+    padding: 10px;
+    z-index: 9999;
+  }
+
+  .floatingBox h2 {
+    font-size: 18px; 
+    color: #9a9a9a;
+    text-align: center; 
+    margin: 0;  
+    border-radius: 5px;
+}
+  
+  .widget-content {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+  }
+  
+  .gpt-checkbox {
+    margin-left: 10px;
+  }

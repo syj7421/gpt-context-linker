@@ -1,0 +1,70 @@
+.reference-item {
+    list-style: none;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.referenceBtn {
+    width: 80%;
+    margin-left: 6%;
+    padding: 10px;
+    background-color: hsla(0, 0%, 88%, 0.9);
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 15px;
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.referenceBtn:hover {
+    background-color: hsla(0, 0%, 77%, 0.9);
+}
+
+.referenceBtn.active {
+    background-color: hsla(0, 0%, 77%, 0.9);
+    color: white;  /* 例如可以让字体变白，以便更明显 */
+}
+
+.deleteBtn,
+.editBtn {
+    position: absolute;
+    background-color: hsla(0,0%,94%,.9);
+    color: rgb(88, 88, 88);
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: none;
+    cursor: pointer;
+    transition: visibility 0s, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.deleteBtn {
+    top: -5px;
+    left: 88%;
+}
+
+.editBtn {
+    bottom: -5px;
+    left: 88%;
+}
+
+.deleteBtn:hover ,
+.editBtn:hover {
+    background-color: hsla(0, 0%, 88%, 0.9);
+}
+
+.reference-item:hover .deleteBtn,
+.reference-item:hover .editBtn {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.material-symbols-outlined {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

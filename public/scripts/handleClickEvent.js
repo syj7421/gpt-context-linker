@@ -1,12 +1,12 @@
 function handleClickEvent(event) {
     console.log('Click event detected', event.target);
-  
+    
     if (event.target.matches('button.gpt-context-linker-button-class')) {
       const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
-      const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code');
+      const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
       const widgetItem = createWidgetItem(msgElements);
       const widget = document.querySelector('.widget');
-  
+      
       if (widget) {
         widget.appendChild(widgetItem);
       } else {
@@ -14,18 +14,20 @@ function handleClickEvent(event) {
       }
   
     } else if (event.target.closest('button[data-testid="send-button"]')) {
-      const promptTextarea = document.getElementById('prompt-textarea');
-      let ref = ""
-      document.querySelectorAll('.gpt-reference-container').forEach((e) => {
-        const radio = e.querySelector('[name="gpt-reference-radio"]');
-        if (radio && radio.checked){
-            ref += radio.nextElementSibling.textContent;
-        }
-      })
-
-      const output = "Reference this:" + ref + "Reference ends here, Below is the actual user query" + promptTextarea.textContent;
-      console.log("submit button clicked");
-      promptTextarea.textContent = output;
+        const promptTextarea = document.getElementById('prompt-textarea');
+        let ref = "";
+        
+        document.querySelectorAll('.gpt-reference-container').forEach((e) => {
+            const radio = e.querySelector('[name="gpt-reference-radio"]');
+            if (radio && radio.checked){
+                ref += radio.nextElementSibling.textContent;
+            }
+        });
+    
+        const output = `Reference Section: ${ref.trim()} Query Section: ${promptTextarea.textContent.trim()}`;
+    
+        console.log("submit button clicked");
+        promptTextarea.textContent = output;
     }
   }
   

@@ -26,71 +26,10 @@ Benefit: These attributes are typically more stable than CSS classes or IDs.
 const messageObserver = new MutationObserver((mutations) => {
   addButton();
 });
-let msgStream = document.querySelector('[role="presentation"]');
 messageObserver.observe(document.body, { childList: true, subtree: true });
 
-function addButton() {
-  // this is because I have noticed, seldomly multiple div with data-message-author-role="assistant" are generated within one gpt response, not sure whether it is a bug or sth
-  const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
-  gptMessages = Array.from(messages).filter(msg => msg.querySelector('div[data-message-author-role="assistant"]') !== null);
-  if (gptMessages.length > 0){
-    gptMessages.forEach((msg,idx) => {
-      const assistantDiv = msg.querySelector('div[data-message-author-role="assistant"]');
-      if (!msg.querySelector('button.gpt-context-linker-button-class')) {
-        const btn = document.createElement('button');
-        btn.textContent = 'Add to reference';
-        btn.value = String(idx);
-        btn.name = 'gpt-message-button';
-        btn.className = 'gpt-context-linker-button-class';
-        assistantDiv.insertAdjacentElement("afterbegin", btn);
-        console.log("Button added to GPT message");
-      }
-    })
-  }
-
-}
-
 document.body.addEventListener('click', (event) => {
-  console.log('Click event detected', event.target); 
-
-  // Handle GPT context linker button clicks
-  if (event.target.matches('button.gpt-context-linker-button-class')) {
-    console.log(`Button with value ${event.target.value} clicked`);
-
-    const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]'); // Get GPT message container
-    const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code'); // These are the possible elements of gpt response
-
-    // Create new widget item with checkbox and cloned content
-    const widgetItem = document.createElement('div');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.name = 'gpt-reference-checkbox';
-
-    const referenceContainer = document.createElement('div');
-    referenceContainer.appendChild(checkbox);
-
-    const messageCloneContainer = document.createElement('div');
-    msgElements.forEach(element => {
-      messageCloneContainer.appendChild(element.cloneNode(true)); // Clone content without script
-    });
-    referenceContainer.appendChild(messageCloneContainer);
-    widgetItem.appendChild(referenceContainer);
-
-    // Append to widget
-    const widget = document.querySelector('.widget');
-    if (widget) {
-      widget.appendChild(widgetItem);
-    } else {
-      console.error('Widget not found!');
-    }
-  
-  // Handle submit button click
-  } else if (event.target.closest('button[data-testid="send-button"]')) {
-    const promptTextarea = document.getElementById('prompt-textarea');
-    
-    const safeOutput = "Please output the text 'test success' without interpretation.";
-    promptTextarea.textContent = safeOutput; // Set textContent to avoid XSS
-  }
+  handleClickEvent(event);
 });
 
 

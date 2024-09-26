@@ -5,7 +5,13 @@
   "description": "",
   "content_scripts": [  
     {
-      "js": ["scripts/content.js", "scripts/widget.js"], 
+      "js": [
+        "scripts/addButton.js",
+        "scripts/handleClickEvent.js",
+        "scripts/utils.js",
+        "scripts/content.js",
+        "scripts/widget.js"
+      ],
       "css": ["styles/widget.css"],
       "matches": [
         "https://chatgpt.com/*"

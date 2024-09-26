@@ -1,29 +1,82 @@
-.widget {
-    position: fixed;
-    right: 20px;
-    top: 20px;
-    width: 300px;
-    background-color: blue;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    z-index: 9999;
-  }
-  
-  .widget .close-btn {
-    background: red;
-    border: none;
-    cursor: pointer;
-    color: black;
-  }
-  
-  .widget-content {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-top: 10px;
-  }
-  
-  .gpt-checkbox {
-    margin-left: 10px;
-  }
-  
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dropdown styles */
+.dropdown {
+  position: relative;
+  display: inline-block; /* Ensure inline-block to align horizontally */
+  margin: 0; /* Remove any extra margin */
+}
+
+.dropdown-btn {
+  background: #2c2f36; /* Match design with Share button */
+  font-size: 14px; 
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  color: #fff; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em 1em; /* Adjust padding to match Share button */
+  border-radius: 8px; /* Rounded corners to match design */
+  gap: 5px; /* Space between text and arrow */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-btn:hover {
+  background: #40444b; /* Slightly darker on hover */
+}
+
+.arrow {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #fff;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Dropdown content styles */
+.dropdown-content {
+  list-style: none;
+  position: absolute;
+  top: 100%; /* Align content directly below the button */
+  left: 0;
+  background-color: #2f3238;
+  padding: 10px;
+  border-radius: 0.5em;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Add shadow for visibility */
+  visibility: hidden; /* Hidden by default */
+  opacity: 0; /* Start invisible */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.dropdown-content li {
+  position: relative;
+  left: 0; /* Stay in place */
+  padding: 8px 12px;
+  background-color: #2f3238;
+  color: white;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.dropdown-content li:hover {
+  background-color: #40444b; /* Highlight on hover */
+}
+
+/* Show dropdown when button is clicked */
+.dropdown-btn:focus + .dropdown-content,
+.dropdown-btn:active + .dropdown-content,
+.dropdown-btn:hover + .dropdown-content {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Rotate arrow when dropdown is opened */
+.dropdown-btn:focus > .arrow,
+.dropdown-btn:active > .arrow,
+.dropdown-btn:hover > .arrow {
+  transform: rotate(180deg);
+}

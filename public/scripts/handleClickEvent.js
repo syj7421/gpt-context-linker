@@ -15,21 +15,32 @@ function handleClickEvent(event) {
   
     } else if (event.target.closest('button[data-testid="send-button"]')) {
       const promptTextarea = document.getElementById('prompt-textarea');
-      const safeOutput = "Please output the text 'test success' without interpretation.";
-      promptTextarea.textContent = safeOutput;
+      let ref = ""
+      document.querySelectorAll('.gpt-reference-container').forEach((e) => {
+        const radio = e.querySelector('[name="gpt-reference-radio"]');
+        if (radio && radio.checked){
+            ref += radio.nextElementSibling.textContent;
+        }
+      })
+
+      const output = "Reference this:" + ref + "Reference ends here, Below is the actual user query" + promptTextarea.textContent;
+      console.log("submit button clicked");
+      promptTextarea.textContent = output;
     }
   }
   
   function createWidgetItem(msgElements) {
     const widgetItem = document.createElement('div');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.name = 'gpt-reference-checkbox';
-  
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'gpt-reference-radio';
+
     const referenceContainer = document.createElement('div');
-    referenceContainer.appendChild(checkbox);
+    referenceContainer.className = 'gpt-reference-container';
+    referenceContainer.appendChild(radio);
   
     const messageCloneContainer = document.createElement('div');
+    messageCloneContainer.className = ""
     msgElements.forEach(element => {
       messageCloneContainer.appendChild(element.cloneNode(true));
     });

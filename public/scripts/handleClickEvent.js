@@ -6,7 +6,7 @@ function handleClickEvent(event) {
       const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
       const widgetItem = createWidgetItem(msgElements);
       const widget = document.querySelector('.widget');
-      
+
       if (widget) {
         widget.appendChild(widgetItem);
       } else {
@@ -24,8 +24,8 @@ function handleClickEvent(event) {
             }
         });
     
-        const output = `Reference Section: ${ref.trim()} Query Section: ${promptTextarea.textContent.trim()}`;
-    
+        // const output = `Reference Section: ${ref.trim()} Query Section: ${promptTextarea.textContent.trim()}`;
+        output = `Reference Section: Query Section: ${promptTextarea.textContent}`
         console.log("submit button clicked");
         promptTextarea.textContent = output;
     }

@@ -1,24 +1,31 @@
+// Utility to get the message list element
 function getMessageList() {
   return document.querySelector('div[role="presentation"]');
 }
 
-// Function to add MutationObserver to detect new messages
-function addReferenceButton() {
+// Function to observe the message list for changes and act accordingly
+function observeMessages(callback) {
   const messageList = getMessageList();
   if (!messageList) {
     console.error("Message list not found");
     return;
   }
 
-  const messageObserver = new MutationObserver(() => {
-    addButton(); // Add buttons when a new GPT message is added
-    hideReferenceFromQuery();
-  });
-
+  const messageObserver = new MutationObserver(callback);
   messageObserver.observe(messageList, { childList: true, subtree: true });
+
+  return messageObserver; // Return observer to manage or disconnect later if needed
 }
 
-// Polling mechanism to check for the element
+// Function to add MutationObserver to detect new messages and trigger actions
+function handleMessages() {
+  observeMessages(() => {
+    addButtonToMessages();
+    hideReferenceFromUserMessages();
+  });
+}
+
+// Polling mechanism to check for the message list element
 function pollForMessageList(callback, maxAttempts = 10, interval = 100) {
   let attempts = 0;
   const intervalId = setInterval(() => {
@@ -33,7 +40,7 @@ function pollForMessageList(callback, maxAttempts = 10, interval = 100) {
   }, interval);
 }
 
-// Function to wait for the 'div[role="presentation"]' to appear
+// Function to wait for the 'div[role="presentation"]' to appear and trigger callback
 function waitForMessageList(callback) {
   const observer = new MutationObserver((_, obs) => {
     const messageList = getMessageList();
@@ -49,7 +56,7 @@ function waitForMessageList(callback) {
   pollForMessageList(callback);
 }
 
-// Event delegation for handling clicks on chat history items
+// Event delegation to handle clicks on specific elements
 document.body.addEventListener('click', (event) => {
   const target = event.target.closest('nav, [data-testid="create-new-chat-button"]');
   if (target) {
@@ -60,4 +67,4 @@ document.body.addEventListener('click', (event) => {
 });
 
 // Initial call to add the MutationObserver when the page first loads
-addReferenceButton();
+handleMessages();

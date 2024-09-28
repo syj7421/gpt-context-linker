@@ -6,8 +6,8 @@
   "content_scripts": [  
     {
       "js": [
-        "scripts/addButton.js",
-        "scripts/hideReferenceFromQuery.js",
+        "scripts/addButtonToMessages.js",
+        "scripts/hideReferenceFromUserMessages.js",
         "scripts/handleClickEvent.js",
         "scripts/utils.js",
         "scripts/content.js",

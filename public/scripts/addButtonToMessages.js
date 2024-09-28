@@ -1,4 +1,4 @@
-function addButton() {
+function addButtonToMessages() {
     const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
     messages.forEach((msg, idx) => {
       const assistantDiv = msg.querySelector('div[data-message-author-role="assistant"]');

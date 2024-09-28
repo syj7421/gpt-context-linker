@@ -1,14 +1,14 @@
 .dropdown {
   position: fixed;
-  top: 20%; /* Button is positioned 20% from the top */
-  right: 0; /* Button aligned to the right */
-  z-index: 9999; /* Ensure it appears above other elements */
+  top: 20%;
+  right: 0;
+  z-index: 9999;
   display: inline-block;
 }
 
 .dropdown-btn {
-  width: 50px; /* Fixed button width */
-  height: 50px; /* Standard height */
+  width: 50px;
+  height: 50px;
   background-color: #ececec;
   border: none;
   cursor: pointer;
@@ -17,42 +17,62 @@
   justify-content: center;
   padding: 0;
   font-size: 16px;
+  transition: transform 0.3s ease-in-out; 
 }
 
 .dropdown-btn svg {
-  width: 80%; /* Icon takes 70-80% of button width */
-  height: 70%; /* Icon size */
+  width: 80%;
+  height: 70%;
 }
 
-/* Dropdown content will cover 25% of the screen width */
 .dropdown-content {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   position: fixed;
-  top: 0; /* Sidebar covers from top to bottom */
-  right: 0; /* Align it to the right */
+  top: 20%;
+  right: 0;
   background-color: #f9f9f9;
-  width: 25vw; /* Sidebar covers 25% of the viewport width */
-  height: 100vh; /* Full height of the screen */
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  width: 25vw;
+  height: 60vh;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   padding: 16px;
-  transition: transform 0.3s ease-in-out; /* Smooth slide-in effect */
-  transform: translateX(100%); /* Initially hidden (off-screen) */
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: translateX(100%); 
+  opacity: 0; 
 }
 
-.dropdown-content li {
+.dropdown-content span {
   padding: 12px 16px;
   text-align: left;
   list-style-type: none;
-  transition: background-color 0.3s ease;
+  opacity: 0;
+  background-color: grey;
+  color: black;
+  transform: translateX(10px);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition-delay: calc(var(--delay) * 0.1s);
 }
 
-.dropdown-content li:hover {
+.dropdown-content span:hover {
   background-color: #f1f1f1;
 }
 
-/* When open, slide the sidebar into view */
+.dropdown.open .dropdown-btn {
+  transform: translateX(-25vw); 
+}
+
 .dropdown.open .dropdown-content {
-  display: block;
-  transform: translateX(0); /* Slide into view */
+  transform: translateX(0); 
+  opacity: 1; 
+}
+
+.dropdown-content, .dropdown-btn {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.dropdown.open .dropdown-content span {
+  opacity: 1;
+  transform: translateX(0);
 }

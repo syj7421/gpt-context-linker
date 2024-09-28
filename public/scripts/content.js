@@ -60,7 +60,7 @@ function waitForMessageList(callback) {
 document.body.addEventListener('click', (event) => {
   const target = event.target.closest('nav, [data-testid="create-new-chat-button"]');
   if (target) {
-    waitForMessageList(addReferenceButton); // Attach MutationObserver after message list loads
+    waitForMessageList(handleMessages); // Attach MutationObserver after message list loads
   }
 
   handleClickEvent(event); // Handle other click events

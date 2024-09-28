@@ -1,46 +1,63 @@
-console.log("script loaded333");
+function getMessageList() {
+  return document.querySelector('div[role="presentation"]');
+}
 
-/* 
-THINGS I HAVE LEARNED:
-1. use mutation observer for dynamic elements, use event listner for static elements, 
-   check whether it is dynamic or static by disabling JS
-2. use event delegation for dynamic elements
-3. event listeners may not work the way you expect because you are clicking at the inner element 
-   e.g. there is <li><a>blah </a></li> ,you thought you are clicking at li but you are actually clicking at a
-   use cloest method to deal with this
-4. check whether or not the tag flashes when interacted, flashing means it is replaced, hence any mutation
-   observer or listener will be gone!
-5. Use data-* attributes (like data-testid, data-message-id, etc.):
-Websites often use data-* attributes for testing or tracking purposes, which are less likely to change compared to classes or IDs. If these attributes are present (as in your case with data-testid), prioritize them over classes or IDs.
-Benefit: These attributes are typically more stable than CSS classes or IDs.
-*/
+// Function to add MutationObserver to detect new messages
+function addReferenceButton() {
+  const messageList = getMessageList();
+  if (!messageList) {
+    console.error("Message list not found");
+    return;
+  }
 
-/* TODO: 
-1. atm, event listners only pick up click event, not enter key pressed event
-2. change checkbox to button, when button is clicked added to the widget, when clicked again, compare whehter the equal
-   thing already exists, if yes, throw an error
+  const messageObserver = new MutationObserver(() => {
+    addButton(); // Add buttons when a new GPT message is added
+    hideReferenceFromQuery();
+  });
 
-*/
+  messageObserver.observe(messageList, { childList: true, subtree: true });
+}
 
-// MutationObserver to detect when new GPT messages are added
-const messageObserver = new MutationObserver((mutations) => {
-  addButton();
-});
-messageObserver.observe(document.body, { childList: true, subtree: true });
+// Polling mechanism to check for the element
+function pollForMessageList(callback, maxAttempts = 10, interval = 100) {
+  let attempts = 0;
+  const intervalId = setInterval(() => {
+    const messageList = getMessageList();
+    if (messageList) {
+      clearInterval(intervalId);
+      callback();
+    } else if (++attempts >= maxAttempts) {
+      clearInterval(intervalId);
+      console.error("Message list not found after max polling attempts");
+    }
+  }, interval);
+}
 
+// Function to wait for the 'div[role="presentation"]' to appear
+function waitForMessageList(callback) {
+  const observer = new MutationObserver((_, obs) => {
+    const messageList = getMessageList();
+    if (messageList) {
+      callback();
+      obs.disconnect(); // Stop observing once the element is found
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Fallback polling mechanism
+  pollForMessageList(callback);
+}
+
+// Event delegation for handling clicks on chat history items
 document.body.addEventListener('click', (event) => {
-  handleClickEvent(event);
+  const target = event.target.closest('nav, [data-testid="create-new-chat-button"]');
+  if (target) {
+    waitForMessageList(addReferenceButton); // Attach MutationObserver after message list loads
+  }
+
+  handleClickEvent(event); // Handle other click events
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
+// Initial call to add the MutationObserver when the page first loads
+addReferenceButton();

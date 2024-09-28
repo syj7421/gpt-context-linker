@@ -25,7 +25,7 @@ function handleClickEvent(event) {
         });
     
         // const output = `Reference Section: ${ref.trim()} Query Section: ${promptTextarea.textContent.trim()}`;
-        output = `Reference Section: Query Section: ${promptTextarea.textContent}`
+        output = `Reference___ Query___ ${promptTextarea.textContent}`
         console.log("submit button clicked");
         promptTextarea.textContent = output;
     }

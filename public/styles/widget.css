@@ -5,16 +5,16 @@
     width: 15%;
     background-color:hsla(0,0%,94%,.9);
     border: 1px solid hsla(0,0%,94%,.9);
-    border-radius: 3%;
+    border-radius: 5%;
     padding: 10px;
     z-index: 9999;
   }
 
   .floatingBox h2 {
     font-size: 18px; 
-    color: #9a9a9a;
-    text-align: center; 
-    margin: 0;  
+    color: #666666;
+    text-align: left; 
+    margin-left: 7%;  
     border-radius: 5px;
 }
   

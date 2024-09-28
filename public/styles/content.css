@@ -5,16 +5,17 @@
 }
 
 .referenceBtn {
-    width: 80%;
-    margin-left: 6%;
+    width: 83%;
+    margin-left: 3%;
     padding: 10px;
-    background-color: hsla(0, 0%, 88%, 0.9);
+    background-color: hsla(0,0%,94%,.9);
     cursor: pointer;
-    text-align: center;
+    text-align: left;
     font-size: 16px;
-    border-radius: 15px;
+    border-radius: 10px;
     position: relative;
     transition: background-color 0.3s;
+    font-size: 15px;
 }
 
 .referenceBtn:hover {
@@ -23,7 +24,6 @@
 
 .referenceBtn.active {
     background-color: hsla(0, 0%, 77%, 0.9);
-    color: white;  /* 例如可以让字体变白，以便更明显 */
 }
 
 .deleteBtn,
@@ -52,7 +52,7 @@
 
 .deleteBtn:hover ,
 .editBtn:hover {
-    background-color: hsla(0, 0%, 88%, 0.9);
+    background-color: hsla(0, 0%, 77%, 0.9);
 }
 
 .reference-item:hover .deleteBtn,

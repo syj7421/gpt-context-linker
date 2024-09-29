@@ -1,20 +1,7 @@
 document.body.addEventListener('click', handleClickEvent);
 
 function handleClickEvent(event) {
-    if (event.target.matches('button.add-to-reference-sidebar-button')) {
-      const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
-      const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
-      const widgetItem = createNewReference(msgElements);
-      const widget = document.querySelector('.reference-sidebar-content');
-
-      // Check if the content is already present in the sidebar
-      if (widget && !widget.innerText.includes(widgetItem.innerText)) {
-        widget.appendChild(widgetItem);
-      } else if (!widget) {
-        console.error('Widget not found!');
-      }
-
-    } else if (event.target.closest('button[data-testid="send-button"]')) {
+    if (event.target.closest('button[data-testid="send-button"]')) {
         const promptTextarea = document.getElementById('prompt-textarea');
         let ref = "";
 
@@ -34,11 +21,3 @@ function handleClickEvent(event) {
     }
 }
 
-function createNewReference(msgElements) {
-  const newRef = document.createElement('span');
-  newRef.textContent = "";  // Use textContent for plain text to avoid potential XSS vulnerabilities
-  msgElements.forEach(e => {
-    newRef.textContent += e.textContent;
-  });
-  return newRef;
-}

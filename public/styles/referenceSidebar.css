@@ -52,6 +52,7 @@
   text-align: left;
   list-style-type: none;
   background-color: grey;
+  border-radius: 15px;
   color: black;
   word-wrap: break-word; /* This ensures long words break to avoid overflow */
   white-space: normal;   /* Allows text to wrap within the container */

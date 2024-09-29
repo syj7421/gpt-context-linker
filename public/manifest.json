@@ -6,14 +6,12 @@
   "content_scripts": [  
     {
       "js": [
-        "scripts/addButtonToMessages.js",
-        "scripts/hideReferenceFromUserMessages.js",
         "scripts/handleClickEvent.js",
         "scripts/utils.js",
         "scripts/content.js",
-        "scripts/widget.js"
+        "scripts/referenceSidebar.js"
       ],
-      "css": ["styles/widget.css"],
+      "css": ["styles/referenceSidebar.css"],
       "matches": [
         "https://chatgpt.com/*"
       ]

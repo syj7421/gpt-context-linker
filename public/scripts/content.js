@@ -3,6 +3,32 @@ function getMessageList() {
   return document.querySelector('div[role="presentation"]');
 }
 
+function addButtonToMessages() {
+  const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
+  messages.forEach((msg, idx) => {
+    const assistantDiv = msg.querySelector('div[data-message-author-role="assistant"]');
+    if (assistantDiv && !msg.querySelector('button.add-to-reference-sidebar-button')) {
+      const btn = document.createElement('button');
+      btn.textContent = 'Add to reference';
+      btn.value = String(idx);
+      btn.name = 'gpt-message-button';
+      btn.className = 'add-to-reference-sidebar-button';
+      assistantDiv.insertAdjacentElement("afterbegin", btn);
+    }
+  });
+}
+
+function hideReferenceFromUserMessages() {
+  const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
+  messages.forEach((msg) => {
+    const userMessageDiv = msg.querySelector('div[data-message-author-role="user"] div.whitespace-pre-wrap');
+    if (userMessageDiv) {
+      const cleanedText = userMessageDiv.textContent.replace(/GPT messages Reference:\s*(.*?)\s*Query:\s*/, '');
+      userMessageDiv.textContent = cleanedText;
+    }
+  });
+}
+
 // Function to observe the message list for changes and act accordingly
 function observeMessages(callback) {
   const messageList = getMessageList();

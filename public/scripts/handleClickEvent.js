@@ -1,11 +1,11 @@
 function handleClickEvent(event) {
     console.log('Click event detected', event.target);
     
-    if (event.target.matches('button.gpt-context-linker-button-class')) {
+    if (event.target.matches('button.add-to-reference-sidebar-button')) {
       const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
       const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
-      const widgetItem = createWidgetItem(msgElements);
-      const widget = document.querySelector('.widget');
+      const widgetItem = createNewReference(msgElements);
+      const widget = document.querySelector('.reference-sidebar-content');
 
       if (widget) {
         widget.appendChild(widgetItem);
@@ -31,24 +31,11 @@ function handleClickEvent(event) {
     }
   }
   
-  function createWidgetItem(msgElements) {
-    const widgetItem = document.createElement('div');
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'gpt-reference-radio';
-
-    const referenceContainer = document.createElement('div');
-    referenceContainer.className = 'gpt-reference-container';
-    referenceContainer.appendChild(radio);
-  
-    const messageCloneContainer = document.createElement('div');
-    messageCloneContainer.className = ""
-    msgElements.forEach(element => {
-      messageCloneContainer.appendChild(element.cloneNode(true));
+  function createNewReference(msgElements) {
+    const newRef = document.createElement('span');
+    newRef.innerText = "";
+    msgElements.forEach(e => {
+      newRef.innerText += e;
     });
-    referenceContainer.appendChild(messageCloneContainer);
-    widgetItem.appendChild(referenceContainer);
-  
-    return widgetItem;
+    return newRef;
   }
-  

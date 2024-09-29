@@ -13,19 +13,6 @@ function addButtonToMessages() {
         btn.value = String(idx);
         btn.name = 'gpt-message-button';
         btn.className = 'add-to-reference-sidebar-button';
-        btn.addEventListener('click', () => {
-            const gptResponse = btn.closest('article[data-testid^="conversation-turn-"]');
-            const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
-            const newRef = createNewReference(msgElements);
-            const refSidebar = document.querySelector('.reference-sidebar-content');
-
-            // Check if the content is already present in the sidebar
-            if (refSidebar && !refSidebar.innerText.includes(newRef.innerText)) {
-            refSidebar.appendChild(newRef);
-            } else if (!refSidebar) {
-            console.error('Widget not found!');
-            }
-        });
         assistantDiv.insertAdjacentElement("afterbegin", btn);
         }
     });

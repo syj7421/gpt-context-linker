@@ -1,5 +1,3 @@
-window.onload = createReferenceSidebar;
-
 function createReferenceSidebar() {
   const referenceSidebar = document.createElement('div');
   referenceSidebar.className = 'reference-sidebar';

@@ -6,10 +6,10 @@
   "content_scripts": [  
     {
       "js": [
-        "scripts/handleClickEvent.js",
-        "scripts/utils.js",
-        "scripts/content.js",
-        "scripts/referenceSidebar.js"
+        "scripts/eventHandler.js",
+        "scripts/referenceSidebar.js",
+        "scripts/domManipulation.js",
+        "scripts/content.js"
       ],
       "css": ["styles/referenceSidebar.css"],
       "matches": [

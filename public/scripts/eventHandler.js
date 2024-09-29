@@ -1,7 +1,11 @@
 document.body.addEventListener('click', handleClickEvent);
 
 function handleClickEvent(event) {
-    if (event.target.closest('button[data-testid="send-button"]')) {
+
+    if (event.target.closest('nav, [data-testid="create-new-chat-button"]')) {
+      waitForMessageList(handleMessages); // Attach MutationObserver after message list loads
+    }
+    else if (event.target.closest('button[data-testid="send-button"]')) {
         const promptTextarea = document.getElementById('prompt-textarea');
         let ref = "";
 

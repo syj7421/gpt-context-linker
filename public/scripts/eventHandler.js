@@ -24,18 +24,49 @@ function handleClickEvent(event) {
         let ref = "";
 
         document.querySelectorAll('.gpt-reference-container').forEach((e) => {
-            const radio = e.querySelector('[name="gpt-reference-radio"]');
-            if (radio && radio.checked){
-                ref += radio.nextElementSibling.textContent;
+            const checkbox = e.querySelector('[name="gpt-reference-checkbox"]');
+            if (checkbox && checkbox.checked){
+                console.log("checkbox checking passed");
+                ref += checkbox.nextElementSibling.textContent;
             }
         });
 
         // Avoid duplicating the reference text
-        if (!promptTextarea.textContent.includes('GPT messages Reference:')) {
-            const output = `GPT messages Reference: ${ref.trim()} Query: ${promptTextarea.textContent.trim()}`;
+        if (!promptTextarea.textContent.includes('Reference:')) {
+            const output = `Reference: ${ref.trim()} Query: ${promptTextarea.textContent.trim()}`;
             promptTextarea.textContent = output;
         }
         console.log("submit button clicked");
     }
 }
 
+function createNewReference(msgElements) {
+    console.log(msgElements);
+  
+    // Create the container div
+    const referenceDiv = document.createElement('div');
+    referenceDiv.className = 'gpt-reference-container';  // Add a class for potential styling
+  
+    // Create the checkbox input
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = 'gpt-reference-checkbox';
+    checkbox.className = 'gpt-reference-checkbox';  // Add a class for styling
+  
+    // Create the span element to hold the message content
+    const newRef = document.createElement('span');
+    newRef.className = 'gpt-reference-text';  // Add a class for styling
+    newRef.textContent = "";  // Initialize with empty text content
+  
+    // Populate the span's content from the message elements
+    msgElements.forEach(e => {
+      newRef.textContent += e.textContent;
+    });
+  
+    // Append the checkbox and span to the container div
+    referenceDiv.appendChild(checkbox);
+    referenceDiv.appendChild(newRef);
+  
+    return referenceDiv;
+  }
+  

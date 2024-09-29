@@ -18,22 +18,12 @@ function addButtonToMessages() {
     });
 }
 
-function createNewReference(msgElements) {
-    console.log(msgElements);
-    const newRef = document.createElement('span');
-    newRef.textContent = "";  // Use textContent for plain text to avoid potential XSS vulnerabilities
-    msgElements.forEach(e => {
-        newRef.textContent += e.textContent;
-    });
-    return newRef;
-}
-
 function hideReferenceFromUserMessages() {
     const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
     messages.forEach((msg) => {
         const userMessageDiv = msg.querySelector('div[data-message-author-role="user"] div.whitespace-pre-wrap');
         if (userMessageDiv) {
-        const cleanedText = userMessageDiv.textContent.replace(/GPT messages Reference:\s*(.*?)\s*Query:\s*/, '');
+        const cleanedText = userMessageDiv.textContent.replace(/Reference:\s*(.*?)\s*Query:\s*/, '');
         userMessageDiv.textContent = cleanedText;
         }
     });
@@ -92,3 +82,11 @@ observer.observe(document.body, { childList: true, subtree: true });
 }
 
 
+/* TODO: 돈 입금 + 월세
+1. remove Chat GPT said prefix
+2. lots of errors in const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
+   especially, img, code, laTex(span tag), also did not include table, or any other value
+3. definitely more effective way to store a gpt response, best to remove redundant parts
+4. Local storage
+
+*/

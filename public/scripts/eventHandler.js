@@ -2,9 +2,10 @@ document.body.addEventListener('click', handleClickEvent);
 
 function handleClickEvent(event) {
 
-    if (event.target.closest('nav, [data-testid="create-new-chat-button"]')) {
+    if (event.target.closest('nav')) {
       waitForMessageList(handleMessages); // Attach MutationObserver after message list loads
     }
+
     else if (event.target.closest('.add-to-reference-sidebar-button')) {
         console.log("add to reference button clicked");
         const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');

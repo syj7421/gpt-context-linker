@@ -1,4 +1,5 @@
 document.body.addEventListener('click', handleClickEvent);
+document.body.addEventListener('keydown',handleKeydownEvent);
 
 function handleClickEvent(event) {
 
@@ -21,24 +22,54 @@ function handleClickEvent(event) {
             }
     }
     else if (event.target.closest('button[data-testid="send-button"]')) {
-        const promptTextarea = document.getElementById('prompt-textarea');
-        let ref = "";
-
-        document.querySelectorAll('.gpt-reference-container').forEach((e) => {
-            const checkbox = e.querySelector('[name="gpt-reference-checkbox"]');
-            if (checkbox && checkbox.checked){
-                console.log("checkbox checking passed");
-                ref += checkbox.nextElementSibling.textContent;
-            }
-        });
-
-        // Avoid duplicating the reference text
-        if (!promptTextarea.textContent.includes('Reference:')) {
-            const output = `Reference: ${ref.trim()} Query: ${promptTextarea.textContent.trim()}`;
-            promptTextarea.textContent = output;
-        }
-        console.log("submit button clicked");
+        attachReferenceToUserQuery();
     }
+}
+function handleKeydownEvent(event) {
+    event.stopImmediatePropagation();
+
+    // Check if Enter is pressed and the target is the textarea
+    if (event.key === 'Enter') {
+        // const sendButton = document.querySelector('button[data-testid="send-button"]');
+        // Check if the send button exists and is not disabled
+        
+        event.preventDefault();
+        // Use await to wait for handleSendAction to complete
+        attachReferenceToUserQuery();
+        
+        // should resume and send the query to the server?
+        const sendButton = document.querySelector('button[data-testid="send-button"]');
+        if (sendButton && !sendButton.disabled) {
+            const promptTextarea = document.getElementById('prompt-textarea');
+            console.log("inside text cont:" + promptTextarea.textContent);
+            sendButton.click();
+            console.log("inside text cont after:" + promptTextarea.textContent);
+
+        }
+    }
+}
+
+function attachReferenceToUserQuery(){
+    const promptTextarea = document.getElementById('prompt-textarea');
+    let ref = "";
+
+    document.querySelectorAll('.gpt-reference-container').forEach((e) => {
+        const checkbox = e.querySelector('[name="gpt-reference-checkbox"]');
+        if (checkbox && checkbox.checked){
+            console.log("checkbox checking passed");
+            ref += checkbox.nextElementSibling.textContent;
+        }
+    });
+
+    // Avoid duplicating the reference text
+    if (!promptTextarea.textContent.includes('Reference:')) {
+        console.log("PRompt text areaa: " + promptTextarea.textContent);
+        const output = `Reference: ${ref.trim()} Query: ${promptTextarea.textContent.trim()}`;
+        console.log(output);
+        promptTextarea.textContent = output;
+    }
+    console.log("submit button clicked");
+
 }
 
 function createNewReference(msgElements) {

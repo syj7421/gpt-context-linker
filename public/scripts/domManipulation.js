@@ -122,8 +122,8 @@ function waitForMessageList(callback) {
 2. enable enter submit as well 
 3. lots of errors in const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
    especially, img, code, laTex(span tag), also did not include table, or any other value
-4. definitely more effective way to store a gpt response, best to remove redundant parts
-5. Local storage
-6. UI/UX
+   definitely more effective way to store a gpt response, best to remove redundant parts
+4. Local storage
+5. UI/UX
 
 */

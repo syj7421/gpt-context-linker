@@ -20,6 +20,11 @@ function handleClickEvent(event) {
             console.error('Widget not found!');
             }
     }
+    else if (event.target.name === 'gpt-reference-checkbox' ) {
+        console.log("dfsfdss");
+        addReferenceWhenCheckboxChecked();
+
+    }
     else if (event.target.closest('button[data-testid="send-button"]')) {
         const promptTextarea = document.getElementById('prompt-textarea');
         let ref = "";
@@ -40,9 +45,7 @@ function handleClickEvent(event) {
         console.log("submit button clicked");
     }
 }
-
 function createNewReference(msgElements) {
-    console.log(msgElements);
   
     // Create the container div
     const referenceDiv = document.createElement('div');
@@ -70,4 +73,51 @@ function createNewReference(msgElements) {
   
     return referenceDiv;
   }
-  
+ 
+  function addReferenceWhenCheckboxChecked() {
+    const refCheckbox = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+    const refList = [];
+    let referenceCount = 1; // Start counting from 1
+    
+    // Collect all checked references
+    refCheckbox.forEach((e) => {
+        if (e.checked) {
+            const referenceContainer = e.closest('.gpt-reference-container');
+            if (referenceContainer) {
+                const referenceText = referenceContainer.querySelector('.gpt-reference-text');
+                if (referenceText) {
+                    refList.push(`Reference ${referenceCount}:\n${referenceText.textContent.trim()}\n`);
+                    referenceCount++; // Increment the counter for each reference
+                }
+            }
+        }
+    });
+
+    const promptTextarea = document.getElementById('prompt-textarea');
+    
+    // Check if promptTextarea exists
+    if (!promptTextarea) {
+        console.error('The element with id "prompt-textarea" was not found.');
+        return;
+    }
+
+    // Use innerText to preserve newlines
+    let queryText = promptTextarea.innerText.trim() || '';
+    
+    // Build the new reference section with proper indentation and newlines
+    const referencesSection = refList.length ? `---Reference---\n${refList.join('\n')}\n---Reference ends here---\n` : '';
+    
+    const referencePattern = /---Reference---[\s\S]*?---Query---/;
+    
+    // If a reference section exists, remove it
+    if (referencePattern.test(queryText)) {
+        queryText = queryText.replace(referencePattern, '').trim();
+    }
+    
+    // Add the new reference section followed by the preserved query text
+    const updatedPrompt = `${referencesSection}\n---Query---\n${queryText}`;
+    
+    // Set the updated content back to the prompt textarea, using innerText to preserve formatting
+    promptTextarea.innerText = updatedPrompt; // innerText preserves newlines, but textContent does not, also .value only works on direct child
+}
+

@@ -119,7 +119,10 @@ function waitForMessageList(callback) {
 
 /* TODO: 
 1. remove Chat GPT said prefix
-2. enable enter submit as well 
+2. same text already exist 
+3. ref storage max 10, ref at the same time max 3?
+3. checkbox reset after submit
+3. also when the stream changes
 3. lots of errors in const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
    especially, img, code, laTex(span tag), also did not include table, or any other value
 4. definitely more effective way to store a gpt response, best to remove redundant parts

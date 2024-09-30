@@ -1,0 +1,12 @@
+Thank you for the clarification! Given that you're building a Chrome extension to help users reference previous responses, the structured format you've been using makes sense for your project. Here's an idea on how you might improve or streamline this process for users:
+
+Auto-Generate Reference Numbers: Automatically assign reference numbers to each response so users can quickly reference previous ones without manually copying the text.
+
+Summarize or Title Each Response: Instead of copying entire responses, you can create a summary or short title for each response and allow users to reference them in queries. This will make it cleaner and easier to understand.
+
+Highlight & Select: Let users highlight a portion of a previous response, then automatically generate a reference to that specific part (with the relevant response number). This reduces the need for long blocks of text in the query.
+
+Inline Referencing: Instead of labeling with "Reference" and "Query," you could allow users to insert references inline, like:
+
+"In [Ref: 3], you mentioned X. Can you clarify this point further?" This way, the references are integrated into natural queries, improving readability.
+Would that help streamline how users interact with the extension? Let me know if you need further ideas for the Chrome extension!

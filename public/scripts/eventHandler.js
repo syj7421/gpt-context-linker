@@ -39,7 +39,7 @@ function handleClickEvent(event) {
 
         // Avoid duplicating the reference text
         if (!promptTextarea.textContent.includes('Reference:')) {
-            const output = `Reference: ${ref.trim()} Query: ${promptTextarea.textContent.trim()}`;
+            const output = `References: ${ref.trim()} Query: ${promptTextarea.textContent.trim()}`;
             promptTextarea.textContent = output;
         }
         console.log("submit button clicked");
@@ -105,9 +105,9 @@ function createNewReference(msgElements) {
     let queryText = promptTextarea.innerText.trim() || '';
     
     // Build the new reference section with proper indentation and newlines
-    const referencesSection = refList.length ? `---Reference---\n${refList.join('\n')}\n---Reference ends here---\n` : '';
+    const referencesSection = refList.length ? `References:\n${refList.join('\n')}\n` : '';
     
-    const referencePattern = /---Reference---[\s\S]*?---Query---/;
+    const referencePattern = /References:[\s\S]*?Query:/;
     
     // If a reference section exists, remove it
     if (referencePattern.test(queryText)) {
@@ -115,7 +115,7 @@ function createNewReference(msgElements) {
     }
     
     // Add the new reference section followed by the preserved query text
-    const updatedPrompt = `${referencesSection}\n---Query---\n${queryText}`;
+    const updatedPrompt = `${referencesSection}\nQuery:\n${queryText}`;
     
     // Set the updated content back to the prompt textarea, using innerText to preserve formatting
     promptTextarea.innerText = updatedPrompt; // innerText preserves newlines, but textContent does not, also .value only works on direct child

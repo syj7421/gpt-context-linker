@@ -6,43 +6,38 @@ function handleClickEvent(event) {
     }
 
     else if (event.target.closest('.add-to-reference-sidebar-button')) {
-        console.log("add to reference button clicked");
         const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
         const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
         const newRef = createNewReference(msgElements);
         const refSidebar = document.querySelector('.reference-sidebar-content');
+        const countRef = refSidebar.querySelectorAll('.gpt-reference-container');
+        if (countRef.length >= 10){
+            alert('You can store up to 10 references!');
+            return;
+        }
 
         // Check if the content is already present in the sidebar
         if (refSidebar && !refSidebar.innerText.includes(newRef.innerText)) {
-        refSidebar.appendChild(newRef);
+            refSidebar.appendChild(newRef);
         } else if (!refSidebar) {
-        console.error('Widget not found!');
+            console.error('Widget not found!');
+        } else{
+            alert('This reference already exists!');
         }
     }
 
-    else if (event.target.name === 'gpt-reference-checkbox' ) {
-        console.log("dfsfdss");
-        addReferenceWhenCheckboxChecked();
-
+    else if (event.target.name === 'gpt-reference-checkbox') {
+        // Get a NodeList of all checkboxes
+        const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+        
+        // Convert the NodeList to an Array and find the index of the clicked checkbox
+        const nthCheckbox = Array.from(refCheckboxes).indexOf(event.target);
+        
+        // Call your function with the index
+        addReferenceWhenCheckboxChecked(nthCheckbox);
     }
     else if (event.target.closest('button[data-testid="send-button"]')) {
-        const promptTextarea = document.getElementById('prompt-textarea');
-        let ref = "";
-
-        document.querySelectorAll('.gpt-reference-container').forEach((e) => {
-            const checkbox = e.querySelector('[name="gpt-reference-checkbox"]');
-            if (checkbox && checkbox.checked){
-                console.log("checkbox checking passed");
-                ref += checkbox.nextElementSibling.textContent;
-            }
-        });
-
-        // Avoid duplicating the reference text
-        if (!promptTextarea.textContent.includes('Reference:')) {
-            const output = `References: ${ref.trim()} Query: ${promptTextarea.textContent.trim()}`;
-            promptTextarea.textContent = output;
-        }
-        console.log("submit button clicked");
+        
     }
 }
 function createNewReference(msgElements) {
@@ -73,15 +68,17 @@ function createNewReference(msgElements) {
   
     return referenceDiv;
   }
- 
-  function addReferenceWhenCheckboxChecked() {
+  
+  function addReferenceWhenCheckboxChecked(nthCheckbox) {
     const refCheckbox = document.querySelectorAll('[name="gpt-reference-checkbox"]');
     const refList = [];
     let referenceCount = 1; // Start counting from 1
-    
+    let checkedCount = 0;
+
     // Collect all checked references
-    refCheckbox.forEach((e) => {
+    refCheckbox.forEach((e, index) => {
         if (e.checked) {
+            checkedCount++; // Increment the checked count
             const referenceContainer = e.closest('.gpt-reference-container');
             if (referenceContainer) {
                 const referenceText = referenceContainer.querySelector('.gpt-reference-text');
@@ -92,6 +89,14 @@ function createNewReference(msgElements) {
             }
         }
     });
+
+    // If more than 3 checkboxes are checked, show alert and uncheck the last checked checkbox
+    if (checkedCount > 3) {
+        alert('You can reference a maximum of 3 items at a time.');
+        // Uncheck the nth checked checkbox (the one that triggered the alert)
+        refCheckbox[nthCheckbox].checked = false;
+        return; // Exit the function
+    }
 
     const promptTextarea = document.getElementById('prompt-textarea');
     
@@ -121,3 +126,26 @@ function createNewReference(msgElements) {
     promptTextarea.innerText = updatedPrompt; // innerText preserves newlines, but textContent does not, also .value only works on direct child
 }
 
+// Example of calling the function with the nth checkbox index
+// If you have a checkbox click event handler, you can call it like this:
+document.querySelectorAll('[name="gpt-reference-checkbox"]').forEach((checkbox, index) => {
+    checkbox.addEventListener('change', function() {
+        addReferenceWhenCheckboxChecked(index); // Pass the index of the clicked checkbox
+    });
+});
+
+
+
+// function showAlert(message) {
+//     const alertBox = document.getElementById('customAlert');
+//     alertBox.textContent = message;
+//     alertBox.classList.remove('hidden');
+//     alertBox.classList.add('show');
+
+//     setTimeout(() => {
+//         alertBox.classList.remove('show');
+//         setTimeout(() => {
+//             alertBox.classList.add('hidden');
+//         }, 500); // Ensures fade out transition is done before hiding
+//     }, 2000); 
+// }

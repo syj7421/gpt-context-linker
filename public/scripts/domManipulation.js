@@ -118,15 +118,14 @@ function waitForMessageList(callback) {
 
 
 /* TODO: 
-0. li click을 if else if로 처리? nav를 else if 로 둠
-1. remove Chat GPT said prefix
-2. same text already exist 
-3. ref storage max 10, ref at the same time max 3?
+1. li click을 if else if로 처리? nav를 else if 로 둠
+2. same text already exist V
+3. ref storage max 10, ref at the same time max 3? V
 4. checkbox reset after submit
 5. also when the stream changes ***
-6. lots of errors in const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
+6. remove Chat GPT said prefix , lots of errors in const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
    especially, img, code, laTex(span tag), also did not include table, or any other value
-   - definitely more effective way to store a gpt response, best to remove redundant parts
+   - definitely more effective way to store a gpt response, best to remove redundant parts, some eror with "same text already exist as well maybe relate to this?"
 7. Local storage / Sync? 
 8. UI/UX
 

@@ -121,7 +121,7 @@ function waitForMessageList(callback) {
 1. li click을 if else if로 처리? nav를 else if 로 둠
 2. same text already exist V
 3. ref storage max 10, ref at the same time max 3? V
-4. checkbox reset after submit
+4. checkbox reset after submit 
 5. also when the stream changes ***
 6. remove Chat GPT said prefix , lots of errors in const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
    especially, img, code, laTex(span tag), also did not include table, or any other value

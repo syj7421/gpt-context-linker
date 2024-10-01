@@ -1,4 +1,5 @@
 document.body.addEventListener('click', handleClickEvent);
+document.body.addEventListener('keydown', handleKeydownEvent);
 
 function handleClickEvent(event) {
     if (event.target.closest('nav')) {
@@ -37,7 +38,11 @@ function handleClickEvent(event) {
         addReferenceWhenCheckboxChecked(nthCheckbox);
     }
     else if (event.target.closest('button[data-testid="send-button"]')) {
-        
+        console.log("submit button clicked");
+        const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+        refCheckboxes.forEach((e) => {
+            e.checked = false;
+        })
     }
 }
 function createNewReference(msgElements) {
@@ -133,6 +138,20 @@ document.querySelectorAll('[name="gpt-reference-checkbox"]').forEach((checkbox, 
         addReferenceWhenCheckboxChecked(index); // Pass the index of the clicked checkbox
     });
 });
+
+function handleKeydownEvent(event) {
+    // Check if the key pressed is 'Enter'
+    if (event.key === 'Enter') {
+        console.log("Submit button clicked by pressing Enter");
+
+        // Get all checkboxes and uncheck them
+        const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+        refCheckboxes.forEach((e) => {
+            e.checked = false; // Uncheck the checkbox
+        });
+    }
+}
+
 
 
 

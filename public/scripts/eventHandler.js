@@ -4,6 +4,10 @@ document.body.addEventListener('keydown', handleKeydownEvent);
 function handleClickEvent(event) {
     if (event.target.closest('nav')) {
       waitForMessageList(handleMessages); // Attach MutationObserver after message list loads
+      const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+        refCheckboxes.forEach((e) => {
+            e.checked = false;
+        })
     }
 
     else if (event.target.closest('.add-to-reference-sidebar-button')) {

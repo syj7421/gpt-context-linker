@@ -25,7 +25,7 @@ function createReferenceSidebar() {
   referenceSidebar.appendChild(button);
   referenceSidebar.appendChild(content);
 
-  // Toggle the open class to show/hide the sidebar
+  
   button.addEventListener('click', () => {
     referenceSidebar.classList.toggle('open');
   });

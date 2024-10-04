@@ -6,5 +6,4 @@
 
 window.onload = () => {
   createReferenceSidebar(); // create reference sidebar that stores gpt responses that can be used as references
-  handleMessages();
 };

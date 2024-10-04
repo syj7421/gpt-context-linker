@@ -5,6 +5,10 @@ function createReferenceSidebar() {
   const button = document.createElement('button');
   button.className = 'reference-sidebar-btn';
 
+  const createNewRefBtn = document.createElement('button');
+  createNewRefBtn.className = 'create-new-reference-btn';
+  createNewRefBtn.textContent = "New";
+
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   svg.setAttribute('x', '0px');
@@ -23,6 +27,7 @@ function createReferenceSidebar() {
   content.className = 'reference-sidebar-content';
 
   referenceSidebar.appendChild(button);
+  referenceSidebar.appendChild(createNewRefBtn);
   referenceSidebar.appendChild(content);
 
   

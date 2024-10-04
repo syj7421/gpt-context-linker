@@ -5,6 +5,10 @@ function createReferenceSidebar() {
   const button = document.createElement('button');
   button.className = 'reference-sidebar-btn';
 
+  const append_btn = document.createElement('button');
+  append_btn.textContent = '⇔';
+  append_btn.className = 'append_btn';
+
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   svg.setAttribute('x', '0px');
@@ -24,10 +28,39 @@ function createReferenceSidebar() {
 
   referenceSidebar.appendChild(button);
   referenceSidebar.appendChild(content);
+  referenceSidebar.appendChild(append_btn);
 
-  // Toggle the open class to show/hide the sidebar
+  let isSidebarOpen = false;
+  let isWide = false;
+
   button.addEventListener('click', () => {
-    referenceSidebar.classList.toggle('open');
+    isSidebarOpen = !isSidebarOpen;
+
+    if (isSidebarOpen) {
+      referenceSidebar.classList.add('open');
+    } else {
+      referenceSidebar.classList.remove('open');
+      isWide = false; // Reset to narrow mode
+      append_btn.classList.remove('wide');
+      referenceSidebar.classList.remove('wide'); // Close and reset expand state
+    }
+  });
+
+  append_btn.addEventListener('click', () => {
+    if (isSidebarOpen) {
+      isWide = !isWide;
+      if (isWide) {
+        append_btn.classList.add('wide');
+        referenceSidebar.classList.add('wide');
+        button.style.transition = 'transform 0.3s ease-in-out';
+        append_btn.style.transition = 'transform 0.3s ease-in-out';
+      } else {
+        append_btn.classList.remove('wide');
+        referenceSidebar.classList.remove('wide');
+        button.style.transition = 'transform 0.3s ease-in-out';
+        append_btn.style.transition = 'transform 0.3s ease-in-out';
+      }
+    }
   });
 
   document.body.appendChild(referenceSidebar);

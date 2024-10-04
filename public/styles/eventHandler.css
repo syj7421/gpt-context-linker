@@ -1,0 +1,108 @@
+.reference-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 95%;
+    min-height: 150px;
+    max-height: 200px;  /* 每个引用项的最大高度 */
+    padding: 10px;
+    background-color: hsla(0, 0%, 94%, .9);
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    position: relative;
+    overflow-y: auto;  /* 当单个引用项的内容超出时出现垂直滚动条 */
+    transition: background-color 0.3s;
+}
+
+.reference-item:hover {
+    background-color: hsla(0, 0%, 77%, 0.9);
+}
+
+.reference-header {
+    display: flex;
+    flex-direction: row;  /* 水平排列 checkbox 和 title */
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;  /* 与正文部分分隔 */
+}
+
+.gpt-reference-checkbox {
+    margin-right: 10px;
+}
+
+.reference-title {
+    align-items: center;
+    max-width: 90%;               /* 限制标题宽度 */
+    word-wrap: break-word;    /* 自动换行 */
+    white-space: normal;      /* 禁用 nowrap，使文字能够正常换行 */
+    overflow: hidden;         /* 隐藏超出内容 */
+    text-overflow: ellipsis;  /* 超出部分用省略号表示 */
+    display: inline-block;    /* 设置为 inline-block，使样式生效 */
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.gpt-reference-text {
+    position: relative;
+    font-size: 16px;
+    max-width: 100%;  /* 设置最大宽度 */
+    padding-left: 10px;
+    word-wrap: break-word;
+    overflow: hidden;      /* 超出部分隐藏 */
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.custom-tooltip {
+    position: fixed;  /* 固定在页面上 */
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 800px;
+    z-index: 1000;
+    white-space: normal;  /* 允许文字换行 */
+}
+
+.reference-buttons {
+    display: flex;              /* 以 flex 布局显示按钮容器 */
+    flex-direction: row;        /* 水平方向排列 */
+    justify-content: flex-start;/* 左对齐排列 */
+    width: 100%;                /* 按钮容器宽度与引用项一致 */
+    gap: 15px;                   /* 按钮之间的间距 */
+    position: relative;
+    top: -5px;
+}
+
+.deleteBtn,
+.editBtn {
+    background-color: hsla(0, 0%, 94%, .9);
+    color: rgb(88, 88, 88);
+    border: none;
+    border-radius: 5px;
+    width: 55px;
+    height: 25px;
+    display: block;
+    font-weight: bold;
+    margin: 2px 0;
+    cursor: pointer;
+    transition: visibility 0s, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.deleteBtn:hover ,
+.editBtn:hover {
+    background-color: hsla(0, 0%, 77%, 0.9);
+}
+
+/*
+.reference-item:hover .deleteBtn,
+.reference-item:hover .editBtn {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+*/

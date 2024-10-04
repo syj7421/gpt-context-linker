@@ -130,7 +130,9 @@ function addReferenceWhenCheckboxChecked(nthCheckbox) {
 
 // Handle keydown event (e.g., pressing 'Enter')
 function handleKeydownEvent(event) {
-    if (event.key === 'Enter') {
+    // Prevent checkboxes from being unchecked when the Enter key is pressed while the checkbox is focused.
+    const activeElement = document.activeElement;
+    if (event.key === 'Enter' && activeElement.name !== 'gpt-reference-checkbox') {
         console.log("Submit button clicked by pressing Enter");
         resetReferenceCheckboxes(); // Uncheck all checkboxes
     }

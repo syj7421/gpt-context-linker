@@ -17,7 +17,7 @@ function handleClickEvent(event) {
         handleCheckboxClick(event);
     } 
     // Handle "Send" button click to submit the user query
-    else if (event.target.closest('button[data-testid="send-button"]')) {
+    else if (event.target.closest('button[data-testid="send-button"]') || (event.target.closest('nav'))) {
         resetReferenceCheckboxes();
     }
 }
@@ -175,6 +175,9 @@ function addButtonToMessages() {
 
             // Append the SVG to the button
             btn.appendChild(svg);
+            const btnText = document.createElement('p');
+            btnText.textContent = "Create a reference to this"
+            btn.appendChild(btnText);
 
             // Insert the button into the DOM
             assistantDiv.insertAdjacentElement("afterbegin", btn);

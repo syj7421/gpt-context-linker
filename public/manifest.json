@@ -7,11 +7,9 @@
     {
       "js": [
         "scripts/eventHandler.js",
-        "scripts/referenceSidebar.js",
-        "scripts/domManipulation.js",
         "scripts/content.js"
       ],
-      "css": ["styles/referenceSidebar.css"],
+      "css": ["styles/referenceSidebar.css", "styles/addToReferenceSidebarBtn.css"],
       "matches": [
         "https://chatgpt.com/*"
       ]

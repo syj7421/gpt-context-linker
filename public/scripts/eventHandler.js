@@ -4,6 +4,7 @@ function initDOMHandlers(){
     document.body.addEventListener('click', handleClickEvent);
     document.body.addEventListener('keydown', handleKeydownEvent);
     // preventManualReferenceDeletion();
+
 }
 
 // Function to handle various click events

@@ -21,21 +21,23 @@
 */
 
 const STORAGE_KEY = 'gptReferences';
-
 window.onload = () => {
-  createReferenceSidebar(); 
-  initDOMHandlers();
-
+  console.log("window loaded");
+  initDOMHandlers();  // Initialize event handlers
+  createReferenceSidebar(); // Create sidebar and load references
 };
 
-function loadStoredReferences() {
+function loadStoredReferences(callback) {
   chrome.storage.local.get([STORAGE_KEY], (result) => {
-      const storedReferences = result[STORAGE_KEY] || []; 
-      updateReferenceSidebar(storedReferences);  // Updates the UI with loaded references
+    const storedReferences = result[STORAGE_KEY] || [];
+    updateReferenceSidebar(storedReferences);  // Updates the UI with loaded references
+
+    // Call the callback after loading the references
+    if (callback) callback();
   });
 }
 
-// create reference sidebar that stores gpt responses that can be used as references
+// Create the reference sidebar and load references
 function createReferenceSidebar() {
   const referenceSidebar = document.createElement('div');
   referenceSidebar.className = 'reference-sidebar';
@@ -68,14 +70,43 @@ function createReferenceSidebar() {
   referenceSidebar.appendChild(createNewRefBtn);
   referenceSidebar.appendChild(content);
 
-  
   button.addEventListener('click', () => {
     referenceSidebar.classList.toggle('open');
   });
 
   document.body.appendChild(referenceSidebar);
 
-    // call saved references from the local storage
-    loadStoredReferences();
+
+  // Then load stored references from Chrome storage
+  loadStoredReferences(() => {
+    // Now reset checkboxes once stored references are loaded
+    resetCheckboxesOnLoad();
+  });
 }
 
+
+// Function to reset all checkboxes upon page load
+function resetCheckboxesOnLoad() {
+  const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+  console.log("Resetting checkboxes, count:", refCheckboxes.length);
+  refCheckboxes.forEach((checkbox) => {
+      checkbox.checked = false;  // Uncheck all checkboxes on page load
+  });
+
+  // Clear the 'checked' state from storage after resetting
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.get([STORAGE_KEY], (result) => {
+          const storedReferences = result[STORAGE_KEY] || [];
+
+          // Update the stored references by unchecking all items
+          storedReferences.forEach(ref => ref.checked = false);
+
+          // Save the updated state back to Chrome storage
+          chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+              console.log('All references have been unchecked on page load.');
+          });
+      });
+  } else {
+      console.warn('Chrome storage API is not available. This code is likely running outside of a Chrome extension.');
+  }
+}

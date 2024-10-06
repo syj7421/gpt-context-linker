@@ -10,6 +10,7 @@
   "content_scripts": [  
     {
       "js": [
+        "scripts/domManipulation.js",
         "scripts/eventHandler.js",
         "scripts/content.js"
       ],

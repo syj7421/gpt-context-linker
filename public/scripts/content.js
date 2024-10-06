@@ -22,8 +22,8 @@
 
 const STORAGE_KEY = 'gptReferences';
 window.onload = () => {
-  console.log("window loaded");
-  initDOMHandlers();  // Initialize event handlers
+  manipulateDom();
+  initEventHandlers();  // Initialize event handlers
   createReferenceSidebar(); // Create sidebar and load references
 };
 

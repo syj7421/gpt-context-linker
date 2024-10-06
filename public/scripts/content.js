@@ -21,17 +21,19 @@
 */
 
 const STORAGE_KEY = 'gptReferences';
+
+window.onload = () => {
+  createReferenceSidebar(); 
+  initDOMHandlers();
+
+};
+
 function loadStoredReferences() {
   chrome.storage.local.get([STORAGE_KEY], (result) => {
       const storedReferences = result[STORAGE_KEY] || []; 
       updateReferenceSidebar(storedReferences);  // Updates the UI with loaded references
   });
 }
-window.onload = () => {
-  createReferenceSidebar(); 
-  // call saved references from the local storage
-  loadStoredReferences();
-};
 
 // create reference sidebar that stores gpt responses that can be used as references
 function createReferenceSidebar() {
@@ -72,5 +74,8 @@ function createReferenceSidebar() {
   });
 
   document.body.appendChild(referenceSidebar);
+
+    // call saved references from the local storage
+    loadStoredReferences();
 }
 

@@ -1,7 +1,10 @@
 // Main event listeners for click and keydown events
-document.body.addEventListener('click', handleClickEvent);
-document.body.addEventListener('keydown', handleKeydownEvent);
 
+function initDOMHandlers(){
+    document.body.addEventListener('click', handleClickEvent);
+    document.body.addEventListener('keydown', handleKeydownEvent);
+    // preventManualReferenceDeletion();
+}
 
 // Function to handle various click events
 function handleClickEvent(event) {
@@ -124,8 +127,30 @@ function updateReferenceSidebar(storedReferences) {
 function handleCheckboxClick(event) {
     const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
     const clickedCheckboxIndex = Array.from(refCheckboxes).indexOf(event.target);
+
+    // Call the function to handle the checkbox check/uncheck logic
     addReferenceWhenCheckboxChecked(clickedCheckboxIndex);
+
+    // Save the updated checkbox state to storage
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        chrome.storage.local.get([STORAGE_KEY], (result) => {
+            const storedReferences = result[STORAGE_KEY] || [];
+
+            // Update the 'checked' state of the reference based on the checkbox state
+            if (storedReferences[clickedCheckboxIndex]) {
+                storedReferences[clickedCheckboxIndex].checked = event.target.checked;
+            }
+
+            // Save the updated references to local storage
+            chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+                console.log(`Reference checkbox state updated for item at index ${clickedCheckboxIndex}`);
+            });
+        });
+    } else {
+        console.warn('Chrome storage API is not available. This code is likely running outside of a Chrome extension.');
+    }
 }
+
 
 // Create a new reference element to be added to the reference sidebar
 function createNewReference(msgElements) {
@@ -172,6 +197,7 @@ function addReferenceWhenCheckboxChecked(nthCheckbox) {
     }
 
     const promptTextarea = document.getElementById('prompt-textarea');
+
     if (!promptTextarea) {
         console.error('The element with id "prompt-textarea" was not found.');
         return;
@@ -242,3 +268,25 @@ function addButtonToMessages() {
         }
     });
 }
+
+// function preventManualReferenceDeletion() {
+//     document.addEventListener('DOMContentLoaded', function() {
+//         // Select the div element by its id after the DOM is ready
+//         const promptTextareaDiv = document.getElementById('prompt-textarea').querySelector('p');
+//         if (!promptTextareaDiv) {
+//             console.error("prompt-textarea not found");
+//             return;
+//         }
+//         // Attach an event listener to the contenteditable div
+//         promptTextareaDiv.addEventListener('input', function(event) {
+//             console.log("input detected");
+
+//         });
+//     });
+// }
+
+
+
+
+
+

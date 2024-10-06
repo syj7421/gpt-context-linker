@@ -3,6 +3,10 @@
   "name": "GPT Context Linker",
   "version": "1.0",
   "description": "",
+    "permissions": [
+      "storage"
+    ],
+
   "content_scripts": [  
     {
       "js": [

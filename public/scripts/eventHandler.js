@@ -2,6 +2,7 @@
 document.body.addEventListener('click', handleClickEvent);
 document.body.addEventListener('keydown', handleKeydownEvent);
 
+
 // Function to handle various click events
 function handleClickEvent(event) {
     // Handle click on the nav component (switching chat streams)
@@ -11,6 +12,7 @@ function handleClickEvent(event) {
     // Handle custom "Add to reference sidebar" button click
     else if (event.target.closest('.add-to-reference-sidebar-button')) {
         handleAddToReference(event);
+        
     } 
     // Handle reference sidebar checkbox click
     else if (event.target.name === 'gpt-reference-checkbox') {
@@ -35,8 +37,6 @@ function handleChatStreamSwitch() {
     waitForMessageList(handleMessages);  // Function not defined in the provided code
     resetReferenceCheckboxes(); // Reset checkboxes when the main section re-renders
 }
-
-// Handle the action of adding a GPT response to the reference sidebar
 function handleAddToReference(event) {
     const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
     if (!gptResponse) return;
@@ -56,14 +56,70 @@ function handleAddToReference(event) {
         return;
     }
 
-    // Prevent duplicate references
+    // Check if the new reference is already in the sidebar
     if (!refSidebar.innerText.includes(newRef.innerText)) {
         refSidebar.appendChild(newRef);
     } else {
-        alert('This reference already exists!');
+        alert('This reference already exists in the sidebar!');
+        return;
+    }
+
+    // Check if chrome.storage is available
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        // Now save the reference to Chrome local storage
+        chrome.storage.local.get([STORAGE_KEY], (result) => {
+            const storedReferences = result[STORAGE_KEY] || [];
+
+            // Check if this reference already exists in local storage
+            const newRefText = newRef.querySelector('.gpt-reference-text').innerText.trim();
+            const isDuplicate = storedReferences.some(ref => ref.content === newRefText);
+
+            if (isDuplicate) {
+                alert('This reference already exists in storage!');
+            } else {
+                // Add the new reference to local storage
+                storedReferences.push({ content: newRefText, checked: false });
+                chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+                    console.log('New reference added to local storage:', newRefText);
+                    updateReferenceSidebar(storedReferences);  // Update the sidebar after adding to storage
+                });
+            }
+        });
+    } else {
+        console.warn('Chrome storage API is not available. This code is likely running outside of a Chrome extension.');
     }
 }
 
+// Function to update the reference sidebar from local storage
+function updateReferenceSidebar(storedReferences) {
+    const sidebarContent = document.querySelector('.reference-sidebar-content');
+    sidebarContent.innerHTML = '';  // Clear the existing content
+
+    storedReferences.forEach((ref, index) => {
+        const referenceDiv = document.createElement('div');
+        referenceDiv.className = 'gpt-reference-container';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'gpt-reference-checkbox';
+        checkbox.className = 'gpt-reference-checkbox';
+        checkbox.checked = ref.checked;
+
+        const newRefText = document.createElement('span');
+        newRefText.className = 'gpt-reference-text';
+        newRefText.textContent = ref.content;
+
+        referenceDiv.appendChild(checkbox);
+        referenceDiv.appendChild(newRefText);
+
+        sidebarContent.appendChild(referenceDiv);
+
+        // Attach checkbox handler
+        checkbox.addEventListener('change', () => {
+            addReferenceWhenCheckboxChecked(index);
+        });
+    });
+}
 // Handle reference checkbox clicks
 function handleCheckboxClick(event) {
     const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
@@ -91,18 +147,19 @@ function createNewReference(msgElements) {
     return referenceDiv;
 }
 
+// Handle checkbox selection
 function addReferenceWhenCheckboxChecked(nthCheckbox) {
-    const refCheckbox = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+    const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
     const refList = [];
     let checkedCount = 0;
 
     // Collect all checked references
-    refCheckbox.forEach((checkbox, index) => {
+    refCheckboxes.forEach((checkbox, index) => {
         if (checkbox.checked) {
             checkedCount++;
             const referenceText = checkbox.closest('.gpt-reference-container')?.querySelector('.gpt-reference-text')?.textContent?.trim();
             if (referenceText) {
-                refList.push(`Reference ${refList.length + 1}:\n${referenceText}\n`);
+                refList.push(`REFERENCE ${refList.length + 1}:\n${referenceText}\n`);
             }
         }
     });
@@ -110,7 +167,7 @@ function addReferenceWhenCheckboxChecked(nthCheckbox) {
     // Limit to 3 references
     if (checkedCount > 3) {
         alert('You can reference a maximum of 3 items at a time.');
-        refCheckbox[nthCheckbox].checked = false;
+        refCheckboxes[nthCheckbox].checked = false;
         return;
     }
 
@@ -121,18 +178,17 @@ function addReferenceWhenCheckboxChecked(nthCheckbox) {
     }
 
     const queryText = promptTextarea.innerText.trim() || '';
-    const referencesSection = refList.length ? `References:\n${refList.join('\n')}\n` : '';
+    const referencesSection = refList.length ? `REFERENCES:\n${refList.join('\n')}\nQUERY:\n` : '';
     
     // Update the prompt with the new reference section
-    promptTextarea.innerText = `${referencesSection}\nQuery:\n${queryText.replace(/References:[\s\S]*Query:/, '').trim()}`;
+    promptTextarea.innerText = `${referencesSection}${queryText.replace(/REFERENCES:[\s\S]*QUERY:/, '').trim()}`;
 }
 
 
-// Handle keydown event (e.g., pressing 'Enter')
 function handleKeydownEvent(event) {
-    // Prevent checkboxes from being unchecked when the Enter key is pressed while the checkbox is focused.
-    const activeElement = document.activeElement;
-    if (event.key === 'Enter' && activeElement.name !== 'gpt-reference-checkbox') {
+
+    // Prevent shift + enter(line change) from triggering this event
+    if (event.key === 'Enter' && !event.shiftKey && document.activeElement.name !== 'gpt-reference-checkbox') {
         console.log("Submit button clicked by pressing Enter");
         resetReferenceCheckboxes(); // Uncheck all checkboxes
     }

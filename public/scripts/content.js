@@ -5,7 +5,6 @@
 */
 
 /* TODO: 
-1. li click을 if else if로 처리? nav를 else if 로 둠
 2. same text already exist V <-- doesn't really work for long 
 3. ref storage max 10, ref at the same time max 3? V
 4. checkbox reset after submit V
@@ -17,12 +16,12 @@
    - definitely more effective way to store a gpt response, best to remove redundant parts, some eror with "same text already exist as well maybe relate to this?"
 7. Local storage / Sync? 
 8. UI/UX
+9. double finger slide in mac
 
 */
 
 const STORAGE_KEY = 'gptReferences';
 window.onload = () => {
-  manipulateDom();
   initEventHandlers();  // Initialize event handlers
   createReferenceSidebar(); // Create sidebar and load references
 };

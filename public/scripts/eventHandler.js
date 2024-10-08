@@ -203,10 +203,31 @@ function addReferenceWhenCheckboxChecked(nthCheckbox) {
     }
 
     const queryText = promptTextarea.innerText.trim() || '';
-    const referencesSection = refList.length ? `REFERENCES:\n${refList.join('\n')}\nQUERY:\n` : '';
+    const referencesSection = refList.length ? `REFERENCES:\n${refList.join('\n')}\nQUERY:` : '';
+
+    // Clear the existing content of promptTextarea
+    promptTextarea.innerHTML = '';
+
+    // Create the <p> element for the references section
+    if (referencesSection) {
+        const referencesParagraph = document.createElement('p');
+        referencesParagraph.textContent = referencesSection;
+        promptTextarea.appendChild(referencesParagraph);
+    }
+
+    // Create the <p> element for the query text
+    const queryParagraph = document.createElement('p');
+    queryParagraph.textContent = queryText.replace(/REFERENCES:[\s\S]*QUERY:/, '').trim();
+    promptTextarea.appendChild(queryParagraph);
     
-    // Update the prompt with the new reference section
-    promptTextarea.innerText = `${referencesSection}${queryText.replace(/REFERENCES:[\s\S]*QUERY:/, '').trim()}`;
+    // Move the cursor to the second paragraph so the user can start typing the query
+    const selection = window.getSelection();
+    const range = document.createRange();
+
+    range.setStart(queryParagraph, 0); // Move the cursor to the start of the second <p>
+    range.collapse(true); // Collapse the range to the start
+    selection.removeAllRanges(); // Clear any existing selections
+    selection.addRange(range); // Add the new range to move the cursor
 }
 
 

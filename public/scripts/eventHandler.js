@@ -9,17 +9,19 @@ function initEventHandlers(){
 function handleClickEvent(event) {
     // Handle click on the nav component (switching chat streams)
     if (event.target.closest('.create-new-reference-btn')){
-        addButtonToMessages();
+        addBtnToGPTResponses();
     }
     // Handle custom "Add to reference sidebar" button click
     else if (event.target.closest('.add-to-reference-sidebar-button')) {
-        handleAddToReference(event);
-        
+        handleAddToReferenceSidebar(event);
     } 
     // Handle reference sidebar checkbox click
     else if (event.target.name === 'gpt-reference-checkbox') {
         handleCheckboxClick(event);
     } 
+    else if (event.target.name === 'gpt-reference-delete-btn') {
+        handleReferenceDeleteBtnClick(event);
+    }
     // Handle "Send" button click to submit the user query
     else if (event.target.closest('button[data-testid="send-button"]') || (event.target.closest('nav'))) {
         resetReferenceCheckboxes();
@@ -28,53 +30,40 @@ function handleClickEvent(event) {
 
 // Reset all checkboxes in the reference sidebar
 function resetReferenceCheckboxes() {
-    const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
-    refCheckboxes.forEach((e) => {
-        e.checked = false; // Uncheck all checkboxes
-    });
+    for (const checkbox of document.querySelectorAll('[name="gpt-reference-checkbox"]')) {
+        checkbox.checked = false;
+    }
 }
 
-function addButtonToMessages() {
+function addBtnToGPTResponses() {
     const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
-    messages.forEach((msg, idx) => {
+
+    for (const [idx, msg] of messages.entries()) {
         const assistantDiv = msg.querySelector('div[data-message-author-role="assistant"]');
         if (assistantDiv && !msg.querySelector('button.add-to-reference-sidebar-button')) {
             const btn = document.createElement('button');
-            btn.value = String(idx);
+            btn.value = idx;
             btn.name = 'gpt-message-button';
             btn.className = 'add-to-reference-sidebar-button';
             btn.title = 'Add to reference sidebar';
-            // Create an SVG element and append it to the button
-            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute("fill", "#000000");
-            svg.setAttribute("viewBox", "0 0 24 24");
-            svg.setAttribute("width", "24");
-            svg.setAttribute("height", "24");
-            svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path1.setAttribute("d", "M16.5 2.25a.75.75 0 01.75-.75h5.5a.75.75 0 01.75.75v5.5a.75.75 0 01-1.5 0V4.06l-6.22 6.22a.75.75 0 11-1.06-1.06L20.94 3h-3.69a.75.75 0 01-.75-.75z");
-            const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path2.setAttribute("d", "M3.25 4a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h2.5a.75.75 0 01.75.75v3.19l3.72-3.72a.75.75 0 01.53-.22h10a.25.25 0 00.25-.25v-6a.75.75 0 011.5 0v6a1.75 1.75 0 01-1.75 1.75h-9.69l-3.573 3.573A1.457 1.457 0 015 21.043V18.5H3.25a1.75 1.75 0 01-1.75-1.75V4.25c0-.966.784-1.75 1.75-1.75h11a.75.75 0 010 1.5h-11z");
-            // Append paths to the SVG
-            svg.appendChild(path1);
-            svg.appendChild(path2);
-            // Append the SVG to the button
-            btn.appendChild(svg);
-            const btnText = document.createElement('p');
-            btnText.textContent = "Create a reference to this"
-            btn.appendChild(btnText);
+
+            // Risk caused from using innerHTML is minimal, since the content being inserted is hardcoded within the script
+            btn.innerHTML = `
+                <svg fill="#000000" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.5 2.25a.75.75 0 01.75-.75h5.5a.75.75 0 01.75.75v5.5a.75.75 0 01-1.5 0V4.06l-6.22 6.22a.75.75 0 11-1.06-1.06L20.94 3h-3.69a.75.75 0 01-.75-.75z"></path>
+                    <path d="M3.25 4a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h2.5a.75.75 0 01.75.75v3.19l3.72-3.72a.75.75 0 01.53-.22h10a.25.25 0 00.25-.25v-6a.75.75 0 011.5 0v6a1.75 1.75 0 01-1.75 1.75h-9.69l-3.573 3.573A1.457 1.457 0 015 21.043V18.5H3.25a1.75 1.75 0 01-1.75-1.75V4.25c0-.966.784-1.75 1.75-1.75h11a.75.75 0 010 1.5h-11z"></path>
+                </svg>
+                <p>Create a reference to this</p>
+            `;
+
             // Insert the button into the DOM
             assistantDiv.insertAdjacentElement("afterbegin", btn);
         }
-    });
+    }
 }
 
-// Function to handle switching between chat streams
-function handleChatStreamSwitch() {
-    waitForMessageList(handleMessages);  // Function not defined in the provided code
-    resetReferenceCheckboxes(); // Reset checkboxes when the main section re-renders
-}
-function handleAddToReference(event) {
+
+function handleAddToReferenceSidebar(event) {
     const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
     if (!gptResponse) return;
 
@@ -127,62 +116,109 @@ function handleAddToReference(event) {
     }
 }
 
+function handleAddToReferenceSidebar(event) {
+    const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
+    if (!gptResponse) return;
+
+    const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
+    const newRef = createNewReference(msgElements);
+
+    const refSidebar = document.querySelector('.reference-sidebar-content');
+    if (!refSidebar) return console.error('Reference sidebar not found!');
+
+    if (hasMaxReferences(refSidebar)) return alert('You can store up to 10 references!');
+
+    if (!isDuplicateReference(refSidebar, newRef)) {
+        refSidebar.appendChild(newRef);
+        saveReferenceToLocalStorage(newRef);
+    } else {
+        alert('This reference already exists in the sidebar!');
+    }
+}
+
+// Check if the sidebar has reached the maximum references
+function hasMaxReferences(refSidebar) {
+    return refSidebar.querySelectorAll('.gpt-reference-container').length >= 10;
+}
+
+// Check if the reference already exists in the sidebar
+function isDuplicateReference(refSidebar, newRef) {
+    return [...refSidebar.querySelectorAll('.gpt-reference-text')]
+        .some(ref => ref.innerText === newRef.innerText);
+}
+
+// Save the new reference to Chrome local storage
+function saveReferenceToLocalStorage(newRef) {
+    const newRefText = newRef.querySelector('.gpt-reference-text').innerText.trim();
+    
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        chrome.storage.local.get([STORAGE_KEY], (result) => {
+            const storedReferences = result[STORAGE_KEY] || [];
+
+            if (storedReferences.some(ref => ref.content === newRefText)) {
+                alert('This reference already exists in storage!');
+            } else {
+                storedReferences.push({ content: newRefText, checked: false });
+                chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+                    console.log('New reference added to local storage:', newRefText);
+                    updateReferenceSidebar(storedReferences);
+                });
+            }
+        });
+    } else {
+        console.warn('Chrome storage API is not available.');
+    }
+}
+
 // Function to update the reference sidebar from local storage
 function updateReferenceSidebar(storedReferences) {
     const sidebarContent = document.querySelector('.reference-sidebar-content');
     sidebarContent.innerHTML = '';  // Clear the existing content
 
     storedReferences.forEach((ref, index) => {
-        const referenceDiv = document.createElement('div');
-        referenceDiv.className = 'gpt-reference-container';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.name = 'gpt-reference-checkbox';
-        checkbox.className = 'gpt-reference-checkbox';
-        checkbox.checked = ref.checked;
-
-        const newRefText = document.createElement('span');
-        newRefText.className = 'gpt-reference-text';
-        newRefText.textContent = ref.content;
-
-        referenceDiv.appendChild(checkbox);
-        referenceDiv.appendChild(newRefText);
-
-        sidebarContent.appendChild(referenceDiv);
-
-        // Attach checkbox handler
-        checkbox.addEventListener('change', () => {
-            addReferenceWhenCheckboxChecked(index);
-        });
+        sidebarContent.appendChild(createReferenceDiv(ref, index));
     });
 }
-// Handle reference checkbox clicks
-function handleCheckboxClick(event) {
-    const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
-    const clickedCheckboxIndex = Array.from(refCheckboxes).indexOf(event.target);
 
-    // Call the function to handle the checkbox check/uncheck logic
-    addReferenceWhenCheckboxChecked(clickedCheckboxIndex);
+// Create a single reference div
+function createReferenceDiv(ref, index) {
+    const referenceDiv = document.createElement('div');
+    referenceDiv.className = 'gpt-reference-container';
 
-    // Save the updated checkbox state to storage
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-        chrome.storage.local.get([STORAGE_KEY], (result) => {
-            const storedReferences = result[STORAGE_KEY] || [];
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = 'gpt-reference-checkbox';
+    checkbox.className = 'gpt-reference-checkbox';
+    checkbox.checked = ref.checked;
 
-            // Update the 'checked' state of the reference based on the checkbox state
-            if (storedReferences[clickedCheckboxIndex]) {
-                storedReferences[clickedCheckboxIndex].checked = event.target.checked;
-            }
+    const newRefText = document.createElement('span');
+    newRefText.className = 'gpt-reference-text';
+    newRefText.textContent = ref.content;
 
-            // Save the updated references to local storage
-            chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
-                console.log(`Reference checkbox state updated for item at index ${clickedCheckboxIndex}`);
-            });
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'deleteBtn';
+    deleteBtn.innerText = 'Delete';
+
+    referenceDiv.append(checkbox, deleteBtn, newRefText);
+
+    // Event handler for checkbox
+    checkbox.addEventListener('change', () => addReferenceWhenCheckboxChecked(index));
+
+    // Event handler for delete button
+    deleteBtn.addEventListener('click', () => removeReference(index));
+
+    return referenceDiv;
+}
+
+// Remove reference
+function removeReference(index) {
+    chrome.storage.local.get([STORAGE_KEY], (result) => {
+        let storedReferences = result[STORAGE_KEY] || [];
+        storedReferences.splice(index, 1);
+        chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+            updateReferenceSidebar(storedReferences);
         });
-    } else {
-        console.warn('Chrome storage API is not available. This code is likely running outside of a Chrome extension.');
-    }
+    });
 }
 
 
@@ -198,10 +234,18 @@ function createNewReference(msgElements) {
 
     const newRefText = document.createElement('span');
     newRefText.className = 'gpt-reference-text';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'deleteBtn';
+    deleteBtn.innerText = 'Delete'; 
+
+
     newRefText.textContent = Array.from(msgElements).map(e => e.textContent).join('');
 
     referenceDiv.appendChild(checkbox);
+    referenceDiv.appendChild(deleteBtn); // it is not working because it is not how it is structured in the local storage
     referenceDiv.appendChild(newRefText);
+
 
     return referenceDiv;
 }
@@ -274,13 +318,6 @@ function handleKeydownEvent(event) {
         resetReferenceCheckboxes(); // Uncheck all checkboxes
     }
 }
-
-// Example of calling the checkbox handler on checkbox state change
-document.querySelectorAll('[name="gpt-reference-checkbox"]').forEach((checkbox, index) => {
-    checkbox.addEventListener('change', function () {
-        addReferenceWhenCheckboxChecked(index);
-    });
-});
 
 
 

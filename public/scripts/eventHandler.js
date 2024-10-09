@@ -65,12 +65,14 @@ function addToReferenceSidebar(event) {
     const newContent = Array.from(gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li'))
         .map(e => e.textContent.trim()).join('');
 
+    const newTitle = "New reference";
+    
     const refSidebar = document.querySelector('.reference-sidebar-content');
     if (!refSidebar || isDuplicateOrMax(refSidebar, newContent)) return;
 
-    const newRef = createReferenceContainer(newContent);
+    const newRef = createReferenceContainer(newContent, newTitle);
     refSidebar.appendChild(newRef);
-    saveReferenceToLocalStorage(newContent);
+    saveReferenceToLocalStorage(newContent, newTitle);
 }
 
 // Check if the reference is either a duplicate or max limit is reached
@@ -86,7 +88,7 @@ function isDuplicateOrMax(refSidebar, newContent) {
 }
 
 // Save reference to local storage
-function saveReferenceToLocalStorage(content) {
+function saveReferenceToLocalStorage(content, title) {
     if (!chrome?.storage?.local) return console.warn('Chrome storage API is not available.');
 
     chrome.storage.local.get([STORAGE_KEY], (result) => {
@@ -94,7 +96,7 @@ function saveReferenceToLocalStorage(content) {
         if (storedReferences.some(ref => ref.content.trim() === content.trim())) {
             alert('This reference already exists in storage!');
         } else {
-            storedReferences.push({ content: content.trim(), checked: false });
+            storedReferences.push({ content: content.trim(), title: title, checked: false });
             chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
                 console.log('New reference added to local storage:', content);
                 updateReferenceSidebar(storedReferences);
@@ -109,29 +111,36 @@ function updateReferenceSidebar(storedReferences) {
     sidebarContent.innerHTML = '';  // Clear existing content
 
     storedReferences.forEach((ref, index) => {
-        sidebarContent.appendChild(createReferenceContainer(ref.content, index));
+        sidebarContent.appendChild(createReferenceContainer(ref.content,ref.title, index));
     });
 }
 
 // Create a reference container
-function createReferenceContainer(content, index = null) {
-    const referenceDiv = document.createElement('div');
-    referenceDiv.className = 'gpt-reference-container';
+function createReferenceContainer(content,titleText, index = null) {
+    const container = document.createElement('div');
+    container.className = 'gpt-reference-container';
+
+    const header = document.createElement('div');
+    header.className = 'gpt-reference-header';
+
+    const title = document.createElement('p');
+    title.className = "gpt-reference-title";
+    title.innerText = titleText;
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.name = 'gpt-reference-checkbox';
     checkbox.className = 'gpt-reference-checkbox';
 
-    const newRefText = document.createElement('span');
-    newRefText.className = 'gpt-reference-text';
-    newRefText.textContent = content;
-
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerText = 'Delete';
 
-    referenceDiv.append(checkbox, deleteBtn, newRefText);
+    const newRefText = document.createElement('span');
+    newRefText.className = 'gpt-reference-text';
+    newRefText.textContent = content;
+    header.append(checkbox, title, deleteBtn);
+    container.append(header, newRefText);
 
     if (index !== null) {
         checkbox.checked = false;
@@ -139,7 +148,7 @@ function createReferenceContainer(content, index = null) {
         deleteBtn.addEventListener('click', () => removeReference(index));
     }
 
-    return referenceDiv;
+    return container;
 }
 
 // Insert reference to the input when checkbox is checked
@@ -191,4 +200,27 @@ function insertReferenceToInputWhenCheckboxChecked(nthCheckbox) {
     range.collapse(false);
     selection.removeAllRanges();
     selection.addRange(range);
+}
+
+// Remove reference by index and update local storage and sidebar
+function removeReference(index) {
+    if (!chrome?.storage?.local) return console.warn('Chrome storage API is not available.');
+
+    // Get current stored references from Chrome local storage
+    chrome.storage.local.get([STORAGE_KEY], (result) => {
+        let storedReferences = result[STORAGE_KEY] || [];
+        
+        // Remove the reference at the given index
+        if (index >= 0 && index < storedReferences.length) {
+            storedReferences.splice(index, 1);
+            
+            // Update the storage with the new list of references
+            chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+                console.log('Reference removed from local storage:', index);
+                
+                // Refresh the reference sidebar to reflect the removed reference
+                updateReferenceSidebar(storedReferences);
+            });
+        }
+    });
 }

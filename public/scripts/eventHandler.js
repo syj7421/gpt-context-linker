@@ -7,7 +7,7 @@ function initEventHandlers(){
 function handleClickEvent(event) {
     // Handle click on the nav component (switching chat streams)
     if (event.target.closest('.create-new-reference-btn')){
-        addAddToReferenceSidebarBtnToGPTResponses();
+        addReferenceButtonToResponse();
     }
     // Handle custom "Add to reference sidebar" button click
     else if (event.target.closest('.add-to-reference-sidebar-button')) {
@@ -34,7 +34,7 @@ function resetReferenceCheckboxes() {
     }
 }
 
-function addAddToReferenceSidebarBtnToGPTResponses() {
+function addReferenceButtonToResponse() {
     const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
 
     for (const [idx, msg] of messages.entries()) {
@@ -61,26 +61,26 @@ function addAddToReferenceSidebarBtnToGPTResponses() {
     }
 }
 
-function handleReferenceDeleteBtnClick(){
-    console.log("delete button clicked");
-}
-
+// Create a new reference element to be added to the reference sidebar
 function addToReferenceSidebar(event) {
     const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
     if (!gptResponse) return;
 
-    const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
-    const newRef = createNewReference(msgElements);
+    // Collect text content for the new reference
+    const newContent = Array.from(gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li'))
+        .map(e => e.textContent.trim()).join('');
 
     const refSidebar = document.querySelector('.reference-sidebar-content');
     if (!refSidebar) return console.error('Reference sidebar not found!');
 
     if (hasMaxReferences(refSidebar)) return alert('You can store up to 10 references!');
 
-    if (!isDuplicateReference(refSidebar, newRef)) {
+    if (!isDuplicateReference(refSidebar, newContent)) {
+        const newRef = createReferenceContainer(newContent);
         refSidebar.appendChild(newRef);
-        saveReferenceToLocalStorage(newRef);
+        saveReferenceToLocalStorage(newContent); // Pass only content to be saved
     } else {
+        console.log("eeee");
         alert('This reference already exists in the sidebar!');
     }
 }
@@ -91,25 +91,27 @@ function hasMaxReferences(refSidebar) {
 }
 
 // Check if the reference already exists in the sidebar
-function isDuplicateReference(refSidebar, newRef) {
+function isDuplicateReference(refSidebar, newContent) {
+    const normalizedNewContent = newContent.trim();  // Normalize the new content
+    
     return [...refSidebar.querySelectorAll('.gpt-reference-text')]
-        .some(ref => ref.innerText === newRef.innerText);
+        .some(ref => ref.innerText.trim() === normalizedNewContent);  // Normalize the existing content in the sidebar
 }
 
+
 // Save the new reference to Chrome local storage
-function saveReferenceToLocalStorage(newRef) {
-    const newRefText = newRef.querySelector('.gpt-reference-text').innerText.trim();
-    
+function saveReferenceToLocalStorage(content) {
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
         chrome.storage.local.get([STORAGE_KEY], (result) => {
             const storedReferences = result[STORAGE_KEY] || [];
 
-            if (storedReferences.some(ref => ref.content === newRefText)) {
+            if (storedReferences.some(ref => ref.content.trim() === content.trim())) {  // Normalizing for consistency
+                console.log("ffff");
                 alert('This reference already exists in storage!');
             } else {
-                storedReferences.push({ content: newRefText, checked: false });
+                storedReferences.push({ content: content.trim(), checked: false });  // Store trimmed content
                 chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
-                    console.log('New reference added to local storage:', newRefText);
+                    console.log('New reference added to local storage:', content);
                     updateReferenceSidebar(storedReferences);
                 });
             }
@@ -122,10 +124,11 @@ function saveReferenceToLocalStorage(newRef) {
 // Function to update the reference sidebar from local storage
 function updateReferenceSidebar(storedReferences) {
     const sidebarContent = document.querySelector('.reference-sidebar-content');
-    sidebarContent.innerHTML = '';  // Clear the existing content
+    sidebarContent.innerHTML = '';  // Clear existing content
 
+    // Use the unified function to create containers for each stored reference
     storedReferences.forEach((ref, index) => {
-        sidebarContent.appendChild(createReferenceContainer(ref, index));
+        sidebarContent.appendChild(createReferenceContainer(ref.content, index));
     });
 }
 
@@ -140,8 +143,8 @@ function removeReference(index) {
     });
 }
 
-// Create a single reference container
-function createReferenceContainer(ref, index) {
+// Unified function to create a reference container for both new and stored references
+function createReferenceContainer(content, index = null) {
     const referenceDiv = document.createElement('div');
     referenceDiv.className = 'gpt-reference-container';
 
@@ -149,53 +152,29 @@ function createReferenceContainer(ref, index) {
     checkbox.type = 'checkbox';
     checkbox.name = 'gpt-reference-checkbox';
     checkbox.className = 'gpt-reference-checkbox';
-    checkbox.checked = ref.checked;
 
     const newRefText = document.createElement('span');
     newRefText.className = 'gpt-reference-text';
-    newRefText.textContent = ref.content;
+    newRefText.textContent = content;
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerText = 'Delete';
 
+    // Append elements to referenceDiv
     referenceDiv.append(checkbox, deleteBtn, newRefText);
 
-    // Event handler for checkbox
-    checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
-
-    // Event handler for delete button
-    deleteBtn.addEventListener('click', () => removeReference(index));
-
-    return referenceDiv;
-}
-
-// Create a new reference element to be added to the reference sidebar
-function createNewReference(msgElements) {
-    const referenceDiv = document.createElement('div');
-    referenceDiv.className = 'gpt-reference-container';
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.name = 'gpt-reference-checkbox';
-    checkbox.className = 'gpt-reference-checkbox';
-
-    const newRefText = document.createElement('span');
-    newRefText.className = 'gpt-reference-text';
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'deleteBtn';
-    deleteBtn.innerText = 'Delete'; 
-
-
-    newRefText.textContent = Array.from(msgElements).map(e => e.textContent).join('');
-
-    referenceDiv.appendChild(checkbox);
-    referenceDiv.appendChild(deleteBtn); // it is not working because it is not how it is structured in the local storage
-    referenceDiv.appendChild(newRefText);
+    // If an index is provided, add event listeners for stored references
+    if (index !== null) {
+        checkbox.checked = false; // Default unchecked unless loaded from storage
+        // Add event listeners for delete and checkbox interactions for existing references
+        checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
+        deleteBtn.addEventListener('click', () => removeReference(index));
+    }
 
     return referenceDiv;
 }
+
 
 function insertReferenceToInputWhenCheckboxChecked(nthCheckbox) {
     const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');

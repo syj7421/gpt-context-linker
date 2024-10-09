@@ -1,5 +1,3 @@
-// Main event listeners for click and keydown events
-
 function initEventHandlers(){
     document.body.addEventListener('click', handleClickEvent);
     document.body.addEventListener('keydown', handleKeydownEvent);
@@ -17,7 +15,7 @@ function handleClickEvent(event) {
     } 
     // Handle reference sidebar checkbox click
     else if (event.target.name === 'gpt-reference-checkbox') {
-        handleCheckboxClick(event);
+        addReferenceWhenCheckboxChecked(event);
     } 
     else if (event.target.name === 'gpt-reference-delete-btn') {
         handleReferenceDeleteBtnClick(event);
@@ -25,6 +23,14 @@ function handleClickEvent(event) {
     // Handle "Send" button click to submit the user query
     else if (event.target.closest('button[data-testid="send-button"]') || (event.target.closest('nav'))) {
         resetReferenceCheckboxes();
+    }
+}
+
+function handleKeydownEvent(event) {
+    // Prevent shift + enter(line change) from triggering this event
+    if (event.key === 'Enter' && !event.shiftKey && document.activeElement.name !== 'gpt-reference-checkbox') {
+        console.log("Submit button clicked by pressing Enter");
+        resetReferenceCheckboxes(); // Uncheck all checkboxes
     }
 }
 
@@ -61,61 +67,6 @@ function addBtnToGPTResponses() {
         }
     }
 }
-
-
-function handleAddToReferenceSidebar(event) {
-    const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
-    if (!gptResponse) return;
-
-    const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
-    const newRef = createNewReference(msgElements);
-    const refSidebar = document.querySelector('.reference-sidebar-content');
-
-    if (!refSidebar) {
-        console.error('Reference sidebar not found!');
-        return;
-    }
-
-    const existingReferences = refSidebar.querySelectorAll('.gpt-reference-container');
-    if (existingReferences.length >= 10) {
-        alert('You can store up to 10 references!');
-        return;
-    }
-
-    // Check if the new reference is already in the sidebar
-    if (!refSidebar.innerText.includes(newRef.innerText)) {
-        refSidebar.appendChild(newRef);
-    } else {
-        alert('This reference already exists in the sidebar!');
-        return;
-    }
-
-    // Check if chrome.storage is available
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-        // Now save the reference to Chrome local storage
-        chrome.storage.local.get([STORAGE_KEY], (result) => {
-            const storedReferences = result[STORAGE_KEY] || [];
-
-            // Check if this reference already exists in local storage
-            const newRefText = newRef.querySelector('.gpt-reference-text').innerText.trim();
-            const isDuplicate = storedReferences.some(ref => ref.content === newRefText);
-
-            if (isDuplicate) {
-                alert('This reference already exists in storage!');
-            } else {
-                // Add the new reference to local storage
-                storedReferences.push({ content: newRefText, checked: false });
-                chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
-                    console.log('New reference added to local storage:', newRefText);
-                    updateReferenceSidebar(storedReferences);  // Update the sidebar after adding to storage
-                });
-            }
-        });
-    } else {
-        console.warn('Chrome storage API is not available. This code is likely running outside of a Chrome extension.');
-    }
-}
-
 function handleAddToReferenceSidebar(event) {
     const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
     if (!gptResponse) return;
@@ -169,6 +120,16 @@ function saveReferenceToLocalStorage(newRef) {
         console.warn('Chrome storage API is not available.');
     }
 }
+// Remove reference
+function removeReference(index) {
+    chrome.storage.local.get([STORAGE_KEY], (result) => {
+        let storedReferences = result[STORAGE_KEY] || [];
+        storedReferences.splice(index, 1);
+        chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+            updateReferenceSidebar(storedReferences);
+        });
+    });
+}
 
 // Function to update the reference sidebar from local storage
 function updateReferenceSidebar(storedReferences) {
@@ -176,12 +137,12 @@ function updateReferenceSidebar(storedReferences) {
     sidebarContent.innerHTML = '';  // Clear the existing content
 
     storedReferences.forEach((ref, index) => {
-        sidebarContent.appendChild(createReferenceDiv(ref, index));
+        sidebarContent.appendChild(createReferenceContainer(ref, index));
     });
 }
 
 // Create a single reference div
-function createReferenceDiv(ref, index) {
+function createReferenceContainer(ref, index) {
     const referenceDiv = document.createElement('div');
     referenceDiv.className = 'gpt-reference-container';
 
@@ -210,18 +171,6 @@ function createReferenceDiv(ref, index) {
     return referenceDiv;
 }
 
-// Remove reference
-function removeReference(index) {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
-        let storedReferences = result[STORAGE_KEY] || [];
-        storedReferences.splice(index, 1);
-        chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
-            updateReferenceSidebar(storedReferences);
-        });
-    });
-}
-
-
 // Create a new reference element to be added to the reference sidebar
 function createNewReference(msgElements) {
     const referenceDiv = document.createElement('div');
@@ -246,18 +195,16 @@ function createNewReference(msgElements) {
     referenceDiv.appendChild(deleteBtn); // it is not working because it is not how it is structured in the local storage
     referenceDiv.appendChild(newRefText);
 
-
     return referenceDiv;
 }
 
-// Handle checkbox selection
 function addReferenceWhenCheckboxChecked(nthCheckbox) {
     const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
     const refList = [];
     let checkedCount = 0;
 
-    // Collect all checked references
-    refCheckboxes.forEach((checkbox, index) => {
+    // Collect checked references, limit to 3 references
+    refCheckboxes.forEach((checkbox) => {
         if (checkbox.checked) {
             checkedCount++;
             const referenceText = checkbox.closest('.gpt-reference-container')?.querySelector('.gpt-reference-text')?.textContent?.trim();
@@ -267,7 +214,6 @@ function addReferenceWhenCheckboxChecked(nthCheckbox) {
         }
     });
 
-    // Limit to 3 references
     if (checkedCount > 3) {
         alert('You can reference a maximum of 3 items at a time.');
         refCheckboxes[nthCheckbox].checked = false;
@@ -275,56 +221,34 @@ function addReferenceWhenCheckboxChecked(nthCheckbox) {
     }
 
     const promptTextarea = document.getElementById('prompt-textarea');
-
     if (!promptTextarea) {
         console.error('The element with id "prompt-textarea" was not found.');
         return;
     }
 
-    const queryText = promptTextarea.innerText.trim() || '';
+    // Prepare references section
     const referencesSection = refList.length ? `REFERENCES:\n${refList.join('\n')}\nQUERY:` : '';
+    const queryText = promptTextarea.innerText.replace(/REFERENCES:[\s\S]*QUERY:/, '').trim();
 
-    // Clear the existing content of promptTextarea
+    // Clear existing content
     promptTextarea.innerHTML = '';
 
-    // Create the <p> element for the references section
+    // Create paragraphs for references and query text
     if (referencesSection) {
         const referencesParagraph = document.createElement('p');
         referencesParagraph.textContent = referencesSection;
         promptTextarea.appendChild(referencesParagraph);
     }
 
-    // Create the <p> element for the query text
     const queryParagraph = document.createElement('p');
-    queryParagraph.textContent = queryText.replace(/REFERENCES:[\s\S]*QUERY:/, '').trim();
+    queryParagraph.textContent = queryText;
     promptTextarea.appendChild(queryParagraph);
-    
-    // Move the cursor to the second paragraph so the user can start typing the query
+
+    // Move cursor to the end of the second paragraph
     const selection = window.getSelection();
     const range = document.createRange();
-
-    range.setStart(queryParagraph, 0); // Move the cursor to the start of the second <p>
-    range.collapse(true); // Collapse the range to the start
-    selection.removeAllRanges(); // Clear any existing selections
-    selection.addRange(range); // Add the new range to move the cursor
+    range.selectNodeContents(queryParagraph);
+    range.collapse(false); // Move to the end of the paragraph
+    selection.removeAllRanges();
+    selection.addRange(range);
 }
-
-
-function handleKeydownEvent(event) {
-
-    // Prevent shift + enter(line change) from triggering this event
-    if (event.key === 'Enter' && !event.shiftKey && document.activeElement.name !== 'gpt-reference-checkbox') {
-        console.log("Submit button clicked by pressing Enter");
-        resetReferenceCheckboxes(); // Uncheck all checkboxes
-    }
-}
-
-
-
-
-
-
-
-
-
-

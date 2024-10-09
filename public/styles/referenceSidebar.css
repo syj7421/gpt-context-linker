@@ -1,15 +1,16 @@
 .reference-sidebar {
   position: fixed;
-  top: 20%;
-  right: 0;
-  z-index: 9999;
+  top: 10%;
+  right: -25px;
+  z-index: 1000;
   display: inline-block;
+  transition: right 0.3s ease-in-out; 
 }
 
 .reference-sidebar-btn {
   width: 50px;
   height: 50px;
-  background-color: #ececec;
+  background-color: hsla(0,0%,94%,.9);
   border: none;
   cursor: pointer;
   display: flex;
@@ -17,14 +18,17 @@
   justify-content: center;
   padding: 0;
   font-size: 16px;
-  transition: transform 0.3s ease-in-out; 
+  transition: transform 0.3s ease-in-out;
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
 }
 
-.reference-sidebar-btn svg {
-  width: 80%;
-  height: 70%;
+.reference-sidebar:hover {
+  right: 0;
+}
+
+.reference-sidebar.open {
+  right: 15vw;
 }
 
 .reference-sidebar-content {
@@ -32,41 +36,20 @@
   flex-direction: column;
   gap: 10px;
   position: fixed;
-  top: 20%;
+  top: 10%;
   right: 0;
   background-color: #f9f9f9;
-  width: 25vw;
+  width: 15vw;
   height: 60vh;
+  max-height: 60vh; 
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   padding: 16px;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  transform: translateX(100%); 
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+  transform: translateX(100%);
   opacity: 0;
-  overflow-y: auto; /* This will allow vertical scrolling */
+  overflow-y: auto;
   border-bottom-left-radius: 15px;
-}
-
-.reference-sidebar-content div {
-  padding: 12px 16px;
-  text-align: left;
-  list-style-type: none;
-  background-color: grey;
-  border-radius: 15px;
-  color: black;
-  word-wrap: break-word; /* This ensures long words break to avoid overflow */
-  white-space: normal;   /* Allows text to wrap within the container */
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  transition-delay: calc(var(--delay) * 0.1s);
-}
-
-
-.reference-sidebar-content span:hover {
-  background-color: #f1f1f1;
-}
-
-.reference-sidebar.open .reference-sidebar-btn {
-  transform: translateX(-25vw); 
 }
 
 .reference-sidebar.open .reference-sidebar-content {
@@ -74,11 +57,45 @@
   opacity: 1; 
 }
 
-.reference-sidebar-content, .reference-sidebar-btn {
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+.reference-sidebar-btn {
+  transition: right 0.3s ease-in-out;
 }
 
-.reference-sidebar.open .reference-sidebar-content span {
-  opacity: 1;
-  transform: translateX(0);
+.expand-btn {
+  position: fixed;
+  top: calc(10% + 300px); /* 按钮位于主按钮下方 */
+  right: -60px;  /* 按钮一开始不在屏幕内 */
+  background-color: #e7e7e7;
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  height: 80px;
+  border-radius: 15px 0 0 15px; 
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+  transition: right 0.3s ease-in-out; 
+}
+
+.reference-sidebar.open .expand-btn {
+  right: 15vw;
+}
+
+.expand-btn.wide {
+  transform: translateX(-10vw); 
+}
+
+.reference-sidebar.wide .reference-sidebar-content {
+  width: 25vw; /* 设置宽度 */
+}
+
+.reference-sidebar.wide .reference-sidebar-btn {
+  transform: translateX(-10vw);  /* 跟随宽度变化 */
+}
+
+.expand-btn:hover {
+  background-color: #adadad;
 }

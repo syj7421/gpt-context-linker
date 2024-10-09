@@ -7,19 +7,12 @@ function initEventHandlers(){
 function handleClickEvent(event) {
     // Handle click on the nav component (switching chat streams)
     if (event.target.closest('.create-new-reference-btn')){
-        addBtnToGPTResponses();
+        addAddToReferenceSidebarBtnToGPTResponses();
     }
     // Handle custom "Add to reference sidebar" button click
     else if (event.target.closest('.add-to-reference-sidebar-button')) {
-        handleAddToReferenceSidebar(event);
+        addToReferenceSidebar(event);
     } 
-    // Handle reference sidebar checkbox click
-    else if (event.target.name === 'gpt-reference-checkbox') {
-        addReferenceWhenCheckboxChecked(event);
-    } 
-    else if (event.target.name === 'gpt-reference-delete-btn') {
-        handleReferenceDeleteBtnClick(event);
-    }
     // Handle "Send" button click to submit the user query
     else if (event.target.closest('button[data-testid="send-button"]') || (event.target.closest('nav'))) {
         resetReferenceCheckboxes();
@@ -41,7 +34,7 @@ function resetReferenceCheckboxes() {
     }
 }
 
-function addBtnToGPTResponses() {
+function addAddToReferenceSidebarBtnToGPTResponses() {
     const messages = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
 
     for (const [idx, msg] of messages.entries()) {
@@ -67,7 +60,12 @@ function addBtnToGPTResponses() {
         }
     }
 }
-function handleAddToReferenceSidebar(event) {
+
+function handleReferenceDeleteBtnClick(){
+    console.log("delete button clicked");
+}
+
+function addToReferenceSidebar(event) {
     const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
     if (!gptResponse) return;
 
@@ -120,16 +118,6 @@ function saveReferenceToLocalStorage(newRef) {
         console.warn('Chrome storage API is not available.');
     }
 }
-// Remove reference
-function removeReference(index) {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
-        let storedReferences = result[STORAGE_KEY] || [];
-        storedReferences.splice(index, 1);
-        chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
-            updateReferenceSidebar(storedReferences);
-        });
-    });
-}
 
 // Function to update the reference sidebar from local storage
 function updateReferenceSidebar(storedReferences) {
@@ -141,7 +129,18 @@ function updateReferenceSidebar(storedReferences) {
     });
 }
 
-// Create a single reference div
+// Remove reference
+function removeReference(index) {
+    chrome.storage.local.get([STORAGE_KEY], (result) => {
+        let storedReferences = result[STORAGE_KEY] || [];
+        storedReferences.splice(index, 1);
+        chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+            updateReferenceSidebar(storedReferences);
+        });
+    });
+}
+
+// Create a single reference container
 function createReferenceContainer(ref, index) {
     const referenceDiv = document.createElement('div');
     referenceDiv.className = 'gpt-reference-container';
@@ -157,13 +156,13 @@ function createReferenceContainer(ref, index) {
     newRefText.textContent = ref.content;
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'deleteBtn';
+    deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerText = 'Delete';
 
     referenceDiv.append(checkbox, deleteBtn, newRefText);
 
     // Event handler for checkbox
-    checkbox.addEventListener('change', () => addReferenceWhenCheckboxChecked(index));
+    checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
 
     // Event handler for delete button
     deleteBtn.addEventListener('click', () => removeReference(index));
@@ -198,7 +197,7 @@ function createNewReference(msgElements) {
     return referenceDiv;
 }
 
-function addReferenceWhenCheckboxChecked(nthCheckbox) {
+function insertReferenceToInputWhenCheckboxChecked(nthCheckbox) {
     const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
     const refList = [];
     let checkedCount = 0;

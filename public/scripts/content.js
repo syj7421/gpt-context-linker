@@ -21,6 +21,7 @@
 11. cursor move after reference
 12. checkboxes reset after adding new reference to reference sidebar
 13. new responses has no button attached
+14. clicking on delete reset checkboxes
 
 */
 

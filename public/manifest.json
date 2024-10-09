@@ -13,7 +13,7 @@
         "scripts/eventHandler.js",
         "scripts/content.js"
       ],
-      "css": ["styles/referenceSidebar.css", "styles/addToReferenceSidebarBtn.css"],
+      "css": ["styles/referenceSidebar.css", "styles/addToReferenceSidebarBtn.css", "styles/reference.css"],
       "matches": [
         "https://chatgpt.com/*"
       ]

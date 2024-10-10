@@ -22,6 +22,7 @@
 12. checkboxes reset after adding new reference to reference sidebar
 13. new responses has no button attached
 14. clicking on delete reset checkboxes
+15. reference still added after max 3 alert, possibly only on the visual side tho
 
 */
 

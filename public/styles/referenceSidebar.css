@@ -1,34 +1,39 @@
 .reference-sidebar {
   position: fixed;
   top: 10%;
-  right: -25px;
+  right: -40px;
   z-index: 1000;
   display: inline-block;
   transition: right 0.3s ease-in-out; 
 }
 
 .reference-sidebar-btn {
-  width: 50px;
-  height: 50px;
+  position: absolute; /* Ensure the button is always attached to the sidebar */
+  top: 0; /* Stick it to the top */
+  left: -50px; /* Adjust this to ensure it sticks just outside the sidebar when closed */
+  width: 50px; /* Increased for visibility */
+  height: 50px; /* Increased for visibility */
   background-color: hsla(0,0%,94%,.9);
   border: none;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-size: 16px;
+  font-size: 16px; /* Ensure the icon or text inside the button is visible */
   transition: transform 0.3s ease-in-out;
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
+  z-index: 1001; /* Ensure it appears above sidebar */
 }
+
 
 .reference-sidebar:hover {
   right: 0;
 }
 
 .reference-sidebar.open {
-  right: 15vw;
+  right: 20vw; /* Adjusted based on reduced sidebar width */
 }
 
 .reference-sidebar-content {
@@ -37,24 +42,24 @@
   gap: 10px;
   position: fixed;
   top: 10%;
-  right: 0;
+  right: -100%; /* Start hidden offscreen */
   background-color: #f9f9f9;
-  width: 15vw;
+  width: 22vw; /* Moderate width */
   height: 60vh;
-  max-height: 60vh; 
+  max-height: 60vh;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 9999;
+  z-index: 999;
   padding: 16px;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
-  transform: translateX(100%);
-  opacity: 0;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, right 0.3s ease-in-out;
+  opacity: 0; /* Hidden when closed */
   overflow-y: auto;
   border-bottom-left-radius: 15px;
 }
 
 .reference-sidebar.open .reference-sidebar-content {
-  transform: translateX(0); 
-  opacity: 1; 
+  right: 0; /* Slide in from the right */
+  opacity: 1; /* Fully visible when opened */
+  transform: translateX(0);
 }
 
 .reference-sidebar-btn {
@@ -63,39 +68,53 @@
 
 .expand-btn {
   position: fixed;
-  top: calc(10% + 300px); /* 按钮位于主按钮下方 */
-  right: -60px;  /* 按钮一开始不在屏幕内 */
+  top: calc(10% + 300px);
+  right: -60px;
   background-color: #e7e7e7;
   border: none;
   cursor: pointer;
   width: 30px;
   height: 80px;
-  border-radius: 15px 0 0 15px; 
-  font-size: 14px;
+  border-radius: 15px 0 0 15px;
+  font-size: 12px;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-  transition: right 0.3s ease-in-out; 
+  transition: right 0.3s ease-in-out;
 }
 
 .reference-sidebar.open .expand-btn {
-  right: 15vw;
+  right: 22vw; /* Adjust based on sidebar width */
 }
 
+
 .expand-btn.wide {
-  transform: translateX(-10vw); 
+  transform: translateX(-10vw);
 }
 
 .reference-sidebar.wide .reference-sidebar-content {
-  width: 25vw; /* 设置宽度 */
+  width: 30vw; /* Adjust expanded width */
 }
 
 .reference-sidebar.wide .reference-sidebar-btn {
-  transform: translateX(-10vw);  /* 跟随宽度变化 */
+  transform: translateX(-10vw); 
 }
 
 .expand-btn:hover {
   background-color: #adadad;
+}
+.gpt-reference-edit-title-btn,
+.gpt-reference-delete-btn,
+.gpt-reference-checkbox {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -1,3 +1,32 @@
-.add-to-reference-sidebar-button{
+.add-to-reference-sidebar-button {
+    align-self: flex-start; 
+    margin-left: 0; 
     display: flex;
+    justify-content: flex-start; 
+    display: flex; /* Flex container to align items horizontally */
+    justify-content: flex-start; /* Align items to the start horizontally */
+    align-items: center; /* Align items to the center vertically */
+    background-color: #F4F4F5; /* Light background */
+    color: #333; /* Dark gray font color */
+    border-radius: 20px; /* Rounded corners */
+    border: 1px solid #ececec; /* Light gray border */
+    padding: 8.7px 10px; /* Padding */
+    font-size: 14px; /* Text size */
+    cursor: pointer; /* Make it clickable */
+    gap: 6px; /* Add some space between the icon and the text */
 }
+
+.add-to-reference-sidebar-button svg {
+    display: block; /* Ensures SVG does not have extra whitespace */
+}
+
+.add-to-reference-sidebar-button p {
+    margin: 0; /* Remove any default margin from the <p> tag */
+    line-height: 1; /* Align text to the center of the SVG */
+}
+
+  
+  .add-to-reference-sidebar-button:hover {
+    background-color: #E0E0E1; /* Slightly darker gray on hover */
+  }
+  

@@ -123,7 +123,7 @@ function createReferenceContainer(content,titleText, index = null) {
     const header = document.createElement('div');
     header.className = 'gpt-reference-header';
 
-    const title = document.createElement('p');
+    const title = document.createElement('span');
     title.className = "gpt-reference-title";
     title.innerText = titleText;
 
@@ -132,6 +132,10 @@ function createReferenceContainer(content,titleText, index = null) {
     checkbox.name = 'gpt-reference-checkbox';
     checkbox.className = 'gpt-reference-checkbox';
 
+    const editTitleBtn = document.createElement('button');
+    editTitleBtn.className = 'gpt-reference-edit-title-btn';
+    editTitleBtn.innerText = 'Edit title';
+
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerText = 'Delete';
@@ -139,13 +143,15 @@ function createReferenceContainer(content,titleText, index = null) {
     const newRefText = document.createElement('span');
     newRefText.className = 'gpt-reference-text';
     newRefText.textContent = content;
-    header.append(checkbox, title, deleteBtn);
+    header.append(checkbox, title, editTitleBtn, deleteBtn);
     container.append(header, newRefText);
 
     if (index !== null) {
         checkbox.checked = false;
         checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
         deleteBtn.addEventListener('click', () => removeReference(index));
+        editTitleBtn.addEventListener('click', (e) => editReferenceTitle(title, index));
+        
     }
 
     return container;
@@ -224,3 +230,34 @@ function removeReference(index) {
         }
     });
 }
+
+function editReferenceTitle(title, index) {
+    // Make the title editable
+    title.contentEditable = 'true';
+    title.focus();  // Focus on the title for editing
+
+    // Save the changes when the user clicks outside (blur event)
+    title.addEventListener('blur', function onBlur() {
+        let updatedTitle = title.innerText.trim();
+
+        // Limit the title length to 15 characters
+        if (updatedTitle.length > 15) {
+            updatedTitle = updatedTitle.slice(0, 15);  // Truncate excess characters
+        }
+        
+        title.innerText = updatedTitle;  // Update displayed title
+        title.contentEditable = 'false';  // Disable edit mode after saving
+        
+        // Update in chrome.storage
+        chrome.storage.local.get([STORAGE_KEY], (result) => {
+            const storedReferences = result[STORAGE_KEY] || [];
+            storedReferences[index].title = updatedTitle;  // Update the title field
+            chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
+                console.log('Title updated successfully.');
+            });
+        });
+
+        title.removeEventListener('blur', onBlur);  // Remove blur event listener after saving
+    });
+}
+

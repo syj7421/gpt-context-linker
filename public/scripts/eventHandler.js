@@ -150,7 +150,22 @@ function createReferenceContainer(content,titleText, index = null) {
         checkbox.checked = false;
         checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
         deleteBtn.addEventListener('click', () => removeReference(index));
-        editTitleBtn.addEventListener('click', (e) => editReferenceTitle(title, index));
+        editTitleBtn.addEventListener('click', () => editReferenceTitle(title, index));
+        newRefText.addEventListener('mouseover', (event) => {
+            customTooltip.style.display = 'block';
+            customTooltip.innerText = content; 
+            customTooltip.style.left = `${event.clientX - 310}px`;  
+            customTooltip.style.top = `${event.clientY + 10}px`;  
+        });
+        
+        newRefText.addEventListener('mousemove', (event) => {
+            customTooltip.style.left = `${event.clientX + 10}px`;
+            customTooltip.style.top = `${event.clientY + 10}px`;
+        });
+        
+        newRefText.addEventListener('mouseout', () => {
+            customTooltip.style.display = 'none';  
+        });
         
     }
 

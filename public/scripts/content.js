@@ -27,6 +27,7 @@
 
 const STORAGE_KEY = 'gptReferences';
 window.onload = () => {
+  document.body.appendChild(customTooltip); 
   initEventHandlers();  // Initialize event handlers
   createReferenceSidebar(); // Create sidebar and load references
 };
@@ -128,3 +129,14 @@ function resetCheckboxesOnLoad() {
       console.warn('Chrome storage API is not available. This code is likely running outside of a Chrome extension.');
   }
 }
+
+const customTooltip = document.createElement('div');
+customTooltip.className = 'custom-tooltip';
+customTooltip.style.display = 'none'; 
+customTooltip.style.position = 'fixed';
+customTooltip.style.backgroundColor = 'black';
+customTooltip.style.color = 'white';
+customTooltip.style.padding = '10px';
+customTooltip.style.borderRadius = '5px';
+customTooltip.style.maxWidth = '300px';
+customTooltip.style.zIndex = '2000';

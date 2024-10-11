@@ -1,0 +1,69 @@
+.gpt-reference-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 95%;
+    min-height: 150px;
+    max-height: 200px;  /* Maximum height for each reference item */
+    padding: 10px;
+    background-color: hsla(0, 0%, 94%, .9);
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    position: relative;
+    overflow-y: auto;  /* Show vertical scrollbar if the content overflows */
+    transition: background-color 0.3s;
+}
+
+.gpt-reference-container:hover {
+    background-color: hsla(0, 0%, 77%, 0.9);
+}
+
+.gpt-reference-header {
+    display: flex;
+    flex-direction: row;  /* Arrange checkbox and title horizontally */
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;  /* Separate from the body section */
+}
+
+.gpt-reference-checkbox {
+    margin-right: 10px;
+}
+
+.gpt-reference-title {
+    align-items: center;
+    max-width: 90%;  /* Limit the title width */
+    word-wrap: break-word;    /* Enable word wrapping */
+    white-space: normal;      /* Disable nowrap to allow text wrapping */
+    overflow: hidden;         /* Hide overflowing content */
+    text-overflow: ellipsis;  /* Display overflowed content as ellipsis */
+    display: inline-block;    /* Set as inline-block for styles to apply */
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.gpt-reference-text {
+    position: relative;
+    font-size: 16px;
+    max-width: 100%;  /* Set maximum width */
+    padding-left: 10px;
+    word-wrap: break-word;
+    overflow: hidden;  /* Hide overflowed content */
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.custom-tooltip {
+    position: fixed;  /* Fixed position on the page */
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 500px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;  /* Allow text wrapping */
+}

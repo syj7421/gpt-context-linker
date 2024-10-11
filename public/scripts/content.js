@@ -60,8 +60,8 @@ function createReferenceSidebar() {
   svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   svg.setAttribute('x', '0px');
   svg.setAttribute('y', '0px');
-  svg.setAttribute('width', '100');
-  svg.setAttribute('height', '100');
+  svg.setAttribute('width', '50');
+  svg.setAttribute('height', '50');
   svg.setAttribute('viewBox', '0 0 48 48');
 
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -87,12 +87,29 @@ function createReferenceSidebar() {
     referenceSidebar.classList.toggle('open');
     referenceSidebar.classList.remove('wide'); // Reset expand state when closing
     expandBtn.classList.remove('wide');
+    button.style.transition = 'transform 0.3s ease-in-out';
+    expandBtn.style.transition = 'transform 0.3s ease-in-out';
   });
 
   expandBtn.addEventListener('click', () => {
     if (referenceSidebar.classList.contains('open')) {
       referenceSidebar.classList.toggle('wide');
       expandBtn.classList.toggle('wide');
+      button.style.transition = 'transform 0.3s ease-in-out';
+      expandBtn.style.transition = 'transform 0.3s ease-in-out';
+
+      const referenceTexts = document.querySelectorAll('.gpt-reference-text');
+
+      referenceTexts.forEach(refText => {
+        // 处理之前的省略号，避免多次添加'...'
+        let originalContent = refText.closest('.gpt-reference-container').querySelector('.gpt-reference-text2').textContent.trim();
+        
+        if (referenceSidebar.classList.contains('wide')) {
+          refText.textContent = originalContent.slice(0, 500) + (originalContent.length > 300 ? '...' : '');
+        } else {
+          refText.textContent = originalContent.slice(0, 50) + (originalContent.length > 50 ? '...' : '');
+        }
+      });
     }
   });
 
@@ -140,7 +157,7 @@ customTooltip.style.backgroundColor = 'black';
 customTooltip.style.color = 'white';
 customTooltip.style.padding = '10px';
 customTooltip.style.borderRadius = '5px';
-customTooltip.style.maxWidth = '300px';
+customTooltip.style.maxWidth = '600px';
 customTooltip.style.zIndex = '2000';
 
 

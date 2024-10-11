@@ -124,11 +124,19 @@ function createReferenceContainer(content,titleText, index = null) {
     deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`;
 
+    const cleanContent = content.replace(/^ChatGPT said:Create a reference to this/, '').trim();
+
     const newRefText = document.createElement('span');
     newRefText.className = 'gpt-reference-text';
-    newRefText.textContent = content;
+    newRefText.textContent = cleanContent.slice(0, 50) + (cleanContent.length > 50 ? '...' : '');;
+    
+    const hiddenRefText = document.createElement('span');
+    hiddenRefText.className = 'gpt-reference-text2';
+    hiddenRefText.textContent = cleanContent;
+    hiddenRefText.style.display = "none";
+
     header.append(checkbox, title, editTitleBtn, deleteBtn);
-    container.append(header, newRefText);
+    container.append(header, newRefText, hiddenRefText);
 
     if (index !== null) {
         checkbox.checked = false;
@@ -138,12 +146,12 @@ function createReferenceContainer(content,titleText, index = null) {
         newRefText.addEventListener('mouseover', (event) => {
             customTooltip.style.display = 'block';
             customTooltip.innerText = content; 
-            customTooltip.style.left = `${event.clientX - 310}px`;  
-            customTooltip.style.top = `${event.clientY + 10}px`;  
+            customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
+            customTooltip.style.top = `${event.clientY + 10}px`;   
         });
         
         newRefText.addEventListener('mousemove', (event) => {
-            customTooltip.style.left = `${event.clientX + 10}px`;
+            customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
             customTooltip.style.top = `${event.clientY + 10}px`;
         });
         
@@ -165,7 +173,7 @@ function insertReferenceToInputWhenCheckboxChecked(nthCheckbox) {
     refCheckboxes.forEach(checkbox => {
         if (checkbox.checked) {
             checkedCount++;
-            const referenceText = checkbox.closest('.gpt-reference-container')?.querySelector('.gpt-reference-text')?.textContent?.trim();
+            const referenceText = checkbox.closest('.gpt-reference-container')?.querySelector('.gpt-reference-text2')?.textContent?.trim();
             if (referenceText) {
                 refList.push(`REFERENCE ${refList.length + 1}:\n${referenceText}\n`);
             }

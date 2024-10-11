@@ -1,16 +1,16 @@
 .reference-sidebar {
   position: fixed;
   top: 10%;
-  right: -40px;
+  right: 0;
   z-index: 1000;
   display: inline-block;
   transition: right 0.3s ease-in-out; 
 }
 
 .reference-sidebar-btn {
-  position: absolute; /* Ensure the button is always attached to the sidebar */
+  /*position: absolute; /* Ensure the button is always attached to the sidebar */
   top: 0; /* Stick it to the top */
-  left: -90px; /* Adjust this to ensure it sticks just outside the sidebar when closed */
+  /*left: -90px; /* Adjust this to ensure it sticks just outside the sidebar when closed */
   width: 50px; /* Increased for visibility */
   height: 50px; /* Increased for visibility */
   background-color: hsla(0,0%,94%,.9);
@@ -29,7 +29,7 @@
 
 
 .reference-sidebar.open {
-  right: 20vw; /* Adjusted based on reduced sidebar width */
+  right: 15vw; /* Adjusted based on reduced sidebar width */
 }
 
 .reference-sidebar-content {
@@ -40,13 +40,15 @@
   top: 10%;
   right: -100%; /* Start hidden offscreen */
   background-color: #f9f9f9;
-  width: 22vw; /* Moderate width */
+  /*width: 22vw; /* Moderate width */
+  width: 15vw;
   height: 60vh;
   max-height: 60vh;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 999;
   padding: 16px;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, right 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+  transform: translateX(100%);
   opacity: 0; /* Hidden when closed */
   overflow-y: auto;
   border-bottom-left-radius: 15px;
@@ -82,12 +84,12 @@
 }
 
 .reference-sidebar.open .expand-btn {
-  right: 22vw; /* Adjust based on sidebar width */
+  right: 15vw; /* Adjust based on sidebar width */
 }
 
 
 .expand-btn.wide {
-  transform: translateX(-10vw);
+  transform: translateX(-15vw);
 }
 
 .reference-sidebar.wide .reference-sidebar-content {
@@ -95,7 +97,7 @@
 }
 
 .reference-sidebar.wide .reference-sidebar-btn {
-  transform: translateX(-10vw); 
+  transform: translateX(-15vw); 
 }
 
 .expand-btn:hover {

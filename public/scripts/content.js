@@ -31,6 +31,7 @@ window.onload = () => {
   document.body.appendChild(customTooltip); 
   initEventHandlers();  // Initialize event handlers
   createReferenceSidebar(); // Create sidebar and load references
+  addReferenceButtonToResponse();
 };
 
 function loadStoredReferences(callback) {
@@ -51,9 +52,9 @@ function createReferenceSidebar() {
   const button = document.createElement('button');
   button.className = 'reference-sidebar-btn';
 
-  const createNewRefBtn = document.createElement('button');
-  createNewRefBtn.className = 'create-new-reference-btn';
-  createNewRefBtn.textContent = "New";
+  // const createNewRefBtn = document.createElement('button');
+  // createNewRefBtn.className = 'create-new-reference-btn';
+  // createNewRefBtn.textContent = "New";
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -77,7 +78,7 @@ function createReferenceSidebar() {
   content.className = 'reference-sidebar-content';
 
   referenceSidebar.appendChild(button);
-  referenceSidebar.appendChild(createNewRefBtn);
+  // referenceSidebar.appendChild(createNewRefBtn);
   referenceSidebar.appendChild(expandBtn);
   referenceSidebar.appendChild(content);
 
@@ -141,3 +142,44 @@ customTooltip.style.padding = '10px';
 customTooltip.style.borderRadius = '5px';
 customTooltip.style.maxWidth = '300px';
 customTooltip.style.zIndex = '2000';
+
+
+
+// Add reference buttons to the response articles
+function addReferenceButtonToResponse() {
+  document.querySelectorAll('article[data-testid^="conversation-turn-"]').forEach((msg, idx) => {
+      const assistantDiv = msg.querySelector('div[data-message-author-role="assistant"]');
+      if (assistantDiv && !msg.querySelector('button.add-to-reference-sidebar-button')) {
+          const btn = createAddToReferenceButton(idx);
+          assistantDiv.prepend(btn);
+      }
+  });
+}
+
+// Create the "Add to Reference" button with innerHTML
+function createAddToReferenceButton(idx) {
+  const btn = document.createElement('button');
+  btn.value = idx;
+  btn.className = 'add-to-reference-sidebar-button';
+  btn.title = 'Add to reference sidebar';
+  btn.innerHTML = `
+      <svg fill="#000000" viewBox="0 0 24 24" width="12" height="12">
+          <path d="M16.5 2.25a.75.75 0 01.75-.75h5.5a.75.75 0 01.75.75v5.5a.75.75 0 01-1.5 0V4.06l-6.22 6.22a.75.75 0 11-1.06-1.06L20.94 3h-3.69a.75.75 0 01-.75-.75z"></path>
+          <path d="M3.25 4a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h2.5a.75.75 0 01.75.75v3.19l3.72-3.72a.75.75 0 01.53-.22h10a.25.25 0 00.25-.25v-6a.75.75 0 011.5 0v6a1.75 1.75 0 01-1.75 1.75h-9.69l-3.573 3.573A1.457 1.457 0 015 21.043V18.5H3.25a1.75 1.75 0 01-1.75-1.75V4.25c0-.966.784-1.75 1.75-1.75h11a.75.75 0 010 1.5h-11z"></path>
+      </svg>
+      <p>Create a reference to this</p>
+  `;
+  return btn;
+}
+
+// MutationObserver setup
+const observer = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'childList' || mutation.type === 'subtree') {
+      addReferenceButtonToResponse();  // Run function to check and attach buttons
+    }
+  }
+});
+
+observer.observe(document.body,{ childList: true, subtree: true });
+

@@ -7,6 +7,9 @@ function initEventHandlers() {
 // Handle click events
 function handleClickEvent(event) {
     const target = event.target;
+    if (target.closest('nav')) {
+        console.log("nav element or its descendant clicked!");
+    }
 
     if (target.closest('.create-new-reference-btn')) {
         addReferenceButtonToResponse();

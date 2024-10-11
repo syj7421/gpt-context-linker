@@ -1,6 +1,7 @@
 .add-to-reference-sidebar-button {
     align-self: flex-start; 
     margin-left: 0; 
+    font-weight: 500;
     display: flex;
     justify-content: flex-start; 
     display: flex; /* Flex container to align items horizontally */

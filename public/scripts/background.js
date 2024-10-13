@@ -1,0 +1,7 @@
+
+function generateTitle(){
+    
+}
+function summariseGptResponse(){
+
+}

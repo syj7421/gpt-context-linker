@@ -3,17 +3,23 @@
   "name": "GPT Context Linker",
   "version": "1.0",
   "description": "",
-    "permissions": [
-      "storage"
-    ],
-
+  "permissions": [
+    "storage"
+  ],
   "content_scripts": [  
     {
       "js": [
+        "scripts/js-yaml.min.js", 
         "scripts/eventHandler.js",
-        "scripts/content.js"
+        "scripts/content.js",
+        "scripts/background.js"
       ],
-      "css": ["styles/body.css","styles/referenceSidebar.css", "styles/addToReferenceSidebarBtn.css", "styles/reference.css"],
+      "css": [
+        "styles/body.css",
+        "styles/referenceSidebar.css",
+        "styles/addToReferenceSidebarBtn.css",
+        "styles/reference.css"
+      ],
       "matches": [
         "https://chatgpt.com/*"
       ]

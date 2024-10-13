@@ -97,6 +97,12 @@ function createReferenceContainer(content,titleText, index = null) {
     const header = document.createElement('div');
     header.className = 'gpt-reference-header';
 
+    const headerLeft = document.createElement('div');
+    headerLeft.className = 'gpt-reference-header-left';
+    
+    const headerRight = document.createElement('div');
+    headerRight.className = 'gpt-reference-header-right';
+
     const title = document.createElement('span');
     title.className = "gpt-reference-title";
     title.innerText = titleText;
@@ -135,7 +141,9 @@ function createReferenceContainer(content,titleText, index = null) {
     hiddenRefText.textContent = cleanContent;
     hiddenRefText.style.display = "none";
 
-    header.append(checkbox, title, editTitleBtn, deleteBtn);
+    headerLeft.append(checkbox, title);
+    headerRight.append(editTitleBtn, deleteBtn);
+    header.append(headerLeft, headerRight);
     container.append(header, newRefText, hiddenRefText);
 
     if (index !== null) {

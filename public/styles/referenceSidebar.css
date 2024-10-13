@@ -1,118 +1,120 @@
+/* Sidebar container */
 .reference-sidebar {
   position: fixed;
-  top: 10%;
-  right: 0;
-  z-index: 1000;
-  display: inline-block;
-  transition: right 0.3s ease-in-out; 
-}
-
-.reference-sidebar-btn {
-  /*position: absolute; /* Ensure the button is always attached to the sidebar */
-  top: 0; /* Stick it to the top */
-  /*left: -90px; /* Adjust this to ensure it sticks just outside the sidebar when closed */
-  width: 50px; /* Increased for visibility */
-  height: 50px; /* Increased for visibility */
-  background-color: hsla(0,0%,94%,.9);
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  top: 10%; /* 10% down from the top of the screen */
+  right: 0; /* Positioned at the right edge */
+  z-index: 1000; /* Ensure it sits above most other elements */
   padding: 0;
-  font-size: 16px; /* Ensure the icon or text inside the button is visible */
-  transition: transform 0.3s ease-in-out;
-  border-top-left-radius: 15px;
+  display: inline-block;
+  transition: right 0.3s ease-in-out; /* Smooth transition when opened/closed */
+}
+
+/* Button to open/close the sidebar */
+.reference-sidebar-btn {
+  top: 0; /* Align the button to the top of the sidebar */
+  width: 50px; /* Button width */
+  height: 50px; /* Button height */
+  background-color: hsla(0, 0%, 94%, .9); /* Light background */
+  border: none; /* No border */
+  cursor: pointer; /* Change cursor on hover */
+  display: inline-flex; /* Align button content (icon or text) */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  padding: 0;
+  font-size: 16px; /* Font size for button content */
+  transition: transform 0.3s ease-in-out; /* Smooth transition for open/close */
+  border-top-left-radius: 15px; /* Rounded corners */
   border-bottom-left-radius: 15px;
-  z-index: 1001; /* Ensure it appears above sidebar */
+  z-index: 1001; /* Make sure it sits above the sidebar */
 }
 
-
+/* Sidebar when it's open */
 .reference-sidebar.open {
-  right: 15vw; /* Adjusted based on reduced sidebar width */
+  right: 25vw; /* Sidebar moves 25% of the viewport width from the right edge */
 }
 
+/* Sidebar content */
 .reference-sidebar-content {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-direction: column; /* Stack content vertically */
+  gap: 10px; /* Space between items */
   position: fixed;
-  top: 10%;
-  right: -100%; /* Start hidden offscreen */
-  background-color: #f9f9f9;
-  /*width: 22vw; /* Moderate width */
-  width: 15vw;
-  height: 60vh;
-  max-height: 60vh;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 999;
-  padding: 16px;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
-  transform: translateX(100%);
-  opacity: 0; /* Hidden when closed */
-  overflow-y: auto;
-  border-bottom-left-radius: 15px;
+  top: 10%; /* 10% from the top of the screen */
+  right: -100%; /* Initially hidden offscreen */
+  background-color: #f9f9f9; /* Background color */
+  width: 25vw; /* Sidebar width */
+  height: 60vh; /* Sidebar height */
+  max-height: 60vh; /* Maximum height */
+  z-index: 999; /* Below the button */
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: translateX(100%); /* Keep offscreen initially */
+  opacity: 0; /* Initially hidden */
+  overflow-y: auto; /* Allow vertical scrolling if content overflows */
+  border-bottom-left-radius: 15px; /* Rounded bottom left corner */
 }
 
+/* When the sidebar is open, content is fully visible */
 .reference-sidebar.open .reference-sidebar-content {
-  right: 0; /* Slide in from the right */
-  opacity: 1; /* Fully visible when opened */
-  transform: translateX(0);
+  right: 0; /* Move it fully into view */
+  opacity: 1; /* Fully visible */
+  transform: translateX(0); /* No translation (fully open) */
 }
 
-.reference-sidebar-btn {
-  transition: right 0.3s ease-in-out;
-}
-
+/* Expand button to toggle wider sidebar */
 .expand-btn {
   position: fixed;
-  top: calc(10% + 300px);
-  right: -60px;
-  background-color: #e7e7e7;
+  top: calc(10% + 300px); /* Positioned below the top */
+  right: -60px; /* Stick out from the right edge */
+  background-color: #e7e7e7; /* Light background */
   border: none;
-  cursor: pointer;
-  width: 30px;
-  height: 80px;
-  border-radius: 15px 0 0 15px;
-  font-size: 12px;
-  line-height: 1;
+  cursor: pointer; /* Pointer cursor on hover */
+  width: 30px; /* Width of expand button */
+  height: 80px; /* Height of expand button */
+  border-radius: 15px 0 0 15px; /* Rounded corners on the left */
+  font-size: 12px; /* Text size */
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-  transition: right 0.3s ease-in-out;
+  align-items: center; /* Center text vertically */
+  justify-content: center; /* Center text horizontally */
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+  transition: right 0.3s ease-in-out; /* Smooth slide effect */
 }
 
+/* Adjust expand button position when the sidebar is open */
 .reference-sidebar.open .expand-btn {
-  right: 15vw; /* Adjust based on sidebar width */
+  right: 25vw; /* Move the button along with the sidebar */
 }
 
-
+/* Widen the sidebar when expanded */
 .expand-btn.wide {
-  transform: translateX(-15vw);
+  transform: translateX(-25vw); /* Move the button further left */
 }
 
+/* When the sidebar is wide */
 .reference-sidebar.wide .reference-sidebar-content {
-  width: 30vw; /* Adjust expanded width */
+  width: 30vw; /* Wider sidebar when expanded */
 }
 
+/* Adjust the position of the sidebar button when the sidebar is wide */
 .reference-sidebar.wide .reference-sidebar-btn {
-  transform: translateX(-15vw); 
+  transform: translateX(-25vw); /* Align button with the expanded sidebar */
 }
 
+/* Change the background color of the expand button on hover */
 .expand-btn:hover {
-  background-color: #adadad;
+  background-color: #adadad; /* Darker gray on hover */
 }
+
+/* Small buttons inside the sidebar (edit, delete, checkbox) */
 .gpt-reference-edit-title-btn,
 .gpt-reference-delete-btn,
 .gpt-reference-checkbox {
-  width: 20px;
+  width: 20px; /* Button size */
   height: 20px;
   padding: 0;
   margin: 0;
-  background-color: transparent;
-  border: none;
-  display: inline-flex;
+  background-color: transparent; /* No background */
+  border: none; /* No border */
+  display: inline-flex; /* Align content */
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Center the icon or content inside */
 }

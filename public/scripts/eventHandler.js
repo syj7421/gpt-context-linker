@@ -33,21 +33,20 @@ function resetReferenceCheckboxes() {
 
 // Add content to reference sidebar
 function addToReferenceSidebar(event) {
-    summariseGptResponseToGenerateReference(event);
-    const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
-    if (!gptResponse) return;
-
-    const newContent = Array.from(gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li'))
-        .map(e => e.textContent.trim()).join('');
+    // const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
+    // if (!gptResponse) return;
+    // const newContent = Array.from(gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li'))
+    //     .map(e => e.textContent.trim()).join('');
 
     const newTitle = "New reference";
+    const summary = summariseGptResponseToGenerateReference(event);
     
     const refSidebar = document.querySelector('.reference-sidebar-content');
-    if (!refSidebar || isDuplicateOrMax(refSidebar, newContent)) return;
+    if (!refSidebar || isDuplicateOrMax(refSidebar, summary)) return;
 
-    const newRef = createReferenceContainer(newContent, newTitle);
+    const newRef = createReferenceContainer(summary, newTitle);
     refSidebar.appendChild(newRef);
-    saveReferenceToLocalStorage(newContent, newTitle);
+    saveReferenceToLocalStorage(summary, newTitle);
 }
 
 // Check if the reference is either a duplicate or max limit is reached

@@ -1,5 +1,3 @@
-// You can now directly use js-yaml since it's included locally
-
 function summariseGptResponseToGenerateReference(event) {
     const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
     
@@ -21,8 +19,6 @@ function summariseGptResponseToGenerateReference(event) {
 
 // Helper function to extract summary from the GPT response
 function extractSummaryFromGPTResponse(element) {
-    let result = [];
-
     // Handle different types of content based on tag
     if (element.nodeType === Node.TEXT_NODE) {
         return {
@@ -30,7 +26,7 @@ function extractSummaryFromGPTResponse(element) {
             content: element.nodeValue.trim()
         };
     }
-
+    
     if (element.tagName === 'CODE' || element.tagName === 'PRE') {
         return {
             type: "code",
@@ -56,16 +52,17 @@ function extractSummaryFromGPTResponse(element) {
         };
     }
 
-    // Handle block-level elements like paragraphs, sections, etc.
-    if (element.tagName === 'P' || element.tagName === 'DIV' || element.tagName === 'SECTION') {
-        let content = Array.from(element.childNodes).map(child => extractSummaryFromGPTResponse(child)).filter(Boolean);
+    // For other elements, just extract the text content and classify as "text"
+    let textContent = element.textContent.replace(/\s+/g, ' ').trim();  // Clean up the text
+    if (textContent) {
         return {
-            type: "paragraph",
-            content: content.map(c => c.content || '').join(' ')  // Flatten nested elements into plain text
+            type: "text",
+            content: textContent
         };
     }
 
-    // Recursively process other child nodes
+    // Recursively process other child nodes if they exist
+    let result = [];
     if (element.childNodes.length > 0) {
         Array.from(element.childNodes).forEach(child => {
             let childSummary = extractSummaryFromGPTResponse(child);
@@ -78,5 +75,3 @@ function extractSummaryFromGPTResponse(element) {
     return result.length > 0 ? result : '';
 }
 
-// Example of how you can call the function based on an event
-document.addEventListener('click', summariseGptResponseToGenerateReference);

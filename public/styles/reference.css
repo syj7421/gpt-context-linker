@@ -71,11 +71,26 @@
     position: relative;
     font-size: 16px; /* Font size for main text */
     max-width: 100%; /* Ensure text doesn’t exceed container width */
-    padding-left: 10px; /* Padding to create spacing */
+    padding: 10px; /* Padding to create spacing */
     word-wrap: break-word; /* Enable word wrapping */
     overflow: hidden; /* Hide overflow */
     text-overflow: ellipsis; /* Show ellipsis for overflowing text */
     position: relative;
+    height: 55%;
+  }
+
+  .reference-detail-btn {
+    position: relative;
+    font-size: 16px;
+    justify-content: center;
+    text-decoration: none;
+    right: 10%;
+    gap: 10px;
+  }
+
+  .reference-detail-btn:hover {
+    font-weight: bold;
+    text-decoration: underline;
   }
   
   /* Tooltip for additional information */

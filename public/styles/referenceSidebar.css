@@ -37,7 +37,6 @@
 .reference-sidebar-content {
   display: flex;
   flex-direction: column; /* Stack content vertically */
-  gap: 10px; /* Space between items */
   position: fixed;
   top: 10%; /* 10% from the top of the screen */
   right: -100%; /* Initially hidden offscreen */

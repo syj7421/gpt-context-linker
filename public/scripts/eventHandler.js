@@ -14,6 +14,10 @@ function handleClickEvent(event) {
         addToReferenceSidebar(event);
     } else if (target.closest('button[data-testid="send-button"]') || target.closest('nav')) {
         resetReferenceCheckboxes();
+    }else if (target.closest('button[name="reference-detail-btn"]')) {
+        const referenceContainer = target.closest('.gpt-reference-container');
+        const content = referenceContainer.querySelector('.gpt-reference-text2').textContent;
+        showPopup(content);
     }
 }
 
@@ -97,6 +101,63 @@ function updateReferenceSidebar(storedReferences) {
     });
 }
 
+// 显示弹出窗口的函数
+function showPopup(content) {
+    console.log(111111)
+    // 创建一个遮罩层来覆盖其他内容
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.zIndex = '9998'; // 确保遮罩层位于最上层
+
+    // 创建弹出窗口
+    const popup = document.createElement('div');
+    popup.style.position = 'fixed';
+    popup.style.top = '50%';
+    popup.style.left = '50%';
+    popup.style.transform = 'translate(-50%, -50%)';
+    popup.style.width = '50%';
+    popup.style.maxHeight = '80%'; // 限制高度，确保可以滚动
+    popup.style.backgroundColor = 'white';
+    popup.style.padding = '20px';
+    popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    popup.style.zIndex = '9999'; // 确保弹窗位于遮罩层之上
+    popup.style.overflowY = 'auto'; // 允许内容滚动
+
+    // 创建关闭按钮
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '10px';
+    closeButton.style.right = '10px';
+    closeButton.style.padding = '5px 10px';
+    closeButton.style.cursor = 'pointer';
+    
+    closeButton.addEventListener('click', () => {
+        document.body.removeChild(overlay); // 移除遮罩层和弹窗
+    });
+
+    const cleanContent = content.replace(/^ChatGPT said:Create a reference to this/, '').trim();
+
+    // 创建内容容器
+    const contentContainer = document.createElement('div');
+    contentContainer.style.whiteSpace = 'pre-wrap'; // 保留换行
+    contentContainer.textContent = cleanContent; // 填充详细内容
+
+    // 将关闭按钮和内容添加到弹出窗口
+    popup.appendChild(closeButton);
+    popup.appendChild(contentContainer);
+
+    // 将遮罩层和弹出窗口添加到页面中
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+}
+
+
 // Create a reference container
 function createReferenceContainer(content,titleText, index = null) {
     const container = document.createElement('div');
@@ -150,10 +211,15 @@ function createReferenceContainer(content,titleText, index = null) {
     hiddenRefText.textContent = cleanContent;
     hiddenRefText.style.display = "none";
 
+    const referenceDetailBtn = document.createElement('button');
+    referenceDetailBtn.name = 'reference-detail-btn'
+    referenceDetailBtn.className = 'reference-detail-btn';
+    referenceDetailBtn.innerHTML = 'More Detail'
+
     headerLeft.append(checkbox, title);
     headerRight.append(editTitleBtn, deleteBtn);
     header.append(headerLeft, headerRight);
-    container.append(header, newRefText, hiddenRefText);
+    container.append(header, newRefText, hiddenRefText, referenceDetailBtn);
 
     if (index !== null) {
         checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));

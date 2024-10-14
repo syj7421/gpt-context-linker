@@ -46,7 +46,7 @@
   height: 60vh; /* Sidebar height */
   max-height: 60vh; /* Maximum height */
   z-index: 999; /* Below the button */
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
   transform: translateX(100%); /* Keep offscreen initially */
   opacity: 0; /* Initially hidden */
   overflow-y: auto; /* Allow vertical scrolling if content overflows */
@@ -86,17 +86,17 @@
 
 /* Widen the sidebar when expanded */
 .expand-btn.wide {
-  transform: translateX(-25vw); /* Move the button further left */
+  transform: translateX(-15vw); /* Move the button further left */
 }
 
 /* When the sidebar is wide */
 .reference-sidebar.wide .reference-sidebar-content {
-  width: 30vw; /* Wider sidebar when expanded */
+  width: 40vw; /* Wider sidebar when expanded */
 }
 
 /* Adjust the position of the sidebar button when the sidebar is wide */
 .reference-sidebar.wide .reference-sidebar-btn {
-  transform: translateX(-25vw); /* Align button with the expanded sidebar */
+  transform: translateX(-15vw); /* Align button with the expanded sidebar */
 }
 
 /* Change the background color of the expand button on hover */

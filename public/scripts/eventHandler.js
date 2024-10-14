@@ -14,6 +14,9 @@ function handleClickEvent(event) {
         addToReferenceSidebar(event);
     } else if (target.closest('button[data-testid="send-button"]') || target.closest('nav')) {
         resetReferenceCheckboxes();
+    } else if (target.closest('.gpt-version-btn')) {
+        const clickedModel = target.textContent;
+        switchModel(clickedModel);
     }
 }
 
@@ -23,6 +26,20 @@ function handleKeydownEvent(event) {
         console.log("Submit button clicked by pressing Enter");
         resetReferenceCheckboxes();
     }
+}
+
+// Switch between GPT-3.5 and GPT-4 models
+function switchModel(model) {
+    activeModel = model; // Set the active model
+
+    // Change button styles to indicate active model
+    document.querySelectorAll('.gpt-version-btn').forEach(button => {
+        if (button.textContent === model) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
 }
 
 // Reset all checkboxes in the reference sidebar
@@ -78,6 +95,8 @@ function saveReferenceToLocalStorage(content, title) {
         }
     });
 }
+
+
 
 // Update sidebar with references from local storage
 function updateReferenceSidebar(storedReferences) {
@@ -214,6 +233,51 @@ function insertReferenceToInputWhenCheckboxChecked(nthCheckbox) {
     selection.removeAllRanges();
     selection.addRange(range);
 }
+
+function insertReferenceFileToInputWhenCheckboxChecked(nthCheckbox) {
+    const refCheckboxes = document.querySelectorAll('[name="gpt-reference-checkbox"]');
+    const refList = [];
+    let checkedCount = 0;
+
+    refCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            checkedCount++;
+            const referenceText = checkbox.closest('.gpt-reference-container')?.querySelector('.gpt-reference-text2')?.textContent?.trim();
+            if (referenceText) {
+                refList.push(`REFERENCE ${refList.length + 1}:\n${referenceText}\n`);
+            }
+        }
+    });
+
+    if (checkedCount > 3) {
+        alert('You can reference a maximum of 3 items at a time.');
+        refCheckboxes[nthCheckbox].checked = false;
+        return;
+    }
+
+    if (refList.length > 0) {
+        const referencesContent = `REFERENCES:\n${refList.join('\n')}\n`;
+
+        // 创建 Blob 对象
+        const blob = new Blob([referencesContent], { type: 'text/plain' });
+
+        // 创建下载链接
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = 'reference.txt';
+        //downloadLink.download = querySelector('.gpt-reference-title')?.textContent?.trim();
+
+        // 触发下载
+        downloadLink.click();
+
+        // 释放对象URL
+        URL.revokeObjectURL(downloadLink.href);
+    } else {
+        console.error('No references selected.');
+    }
+}
+
+
 
 // Remove reference by index and update local storage and sidebar
 function removeReference(index) {

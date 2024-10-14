@@ -32,15 +32,55 @@
   right: 15vw; /* Adjusted based on reduced sidebar width */
 }
 
+.reference-sidebar-btncontainer {
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  top: 10%;
+  right: -100%; /* Start hidden offscreen */
+  /*background-color: hsla(0, 0%, 99%, .9);*/
+  background-color: transparent;
+  width: 15vw;
+  height: 5vh;
+  z-index: 999;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+  transform: translateX(100%);
+  opacity: 0; /* Hidden when closed */
+  overflow-y: auto;
+}
+
+.reference-sidebar.open .reference-sidebar-btncontainer {
+  right: 0; /* Slide in from the right */
+  opacity: 1; /* Fully visible when opened */
+  transform: translateX(0);
+}
+
+.gpt-version-btn {
+  display: inline-flex;
+  background-color: hsla(0, 0%, 94%, .9); /* Optional button background */
+  border-radius: 4px; /* Rounds the corners */
+  border: none;
+  cursor: pointer;
+  height: 80%;
+  width: 40%;
+  margin-left: 5%;
+  align-items: center;
+  justify-content: center;
+}
+
+.gpt-version-btn:hover {
+  background-color: hsla(0, 0%, 88%, .9);
+}
+
 .reference-sidebar-content {
   display: flex;
   flex-direction: column;
   gap: 10px;
   position: fixed;
-  top: 10%;
   right: -100%; /* Start hidden offscreen */
-  background-color: #f9f9f9;
+  top: calc(10% + 5vh);
   /*width: 22vw; /* Moderate width */
+  background-color: hsla(0, 0%, 99%, .9);
   width: 15vw;
   height: 60vh;
   max-height: 60vh;
@@ -93,6 +133,10 @@
 }
 
 .reference-sidebar.wide .reference-sidebar-content {
+  width: 30vw; /* Adjust expanded width */
+}
+
+.reference-sidebar.wide .reference-sidebar-btncontainer {
   width: 30vw; /* Adjust expanded width */
 }
 

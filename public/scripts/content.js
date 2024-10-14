@@ -27,6 +27,51 @@
 */
 
 const STORAGE_KEY = 'gptReferences';
+let activeModel = 'GPT-3.5';
+// Add GPT version toggle to the UI
+function addGPTVersionButtons(content) {
+  console.log('Adding GPT version buttons to content:', content); // 调试输出
+
+  if (!content) {
+    console.error('Content element not found!');
+    return;
+  }
+
+  // 创建 GPT-3.5 按钮
+  const gpt3Button = document.createElement('button');
+  gpt3Button.textContent = '使用 GPT-3.5';
+  gpt3Button.className = 'gpt-version-button';
+  gpt3Button.addEventListener('click', () => {
+      selectedGPTVersion = 'gpt3.5';
+      chrome.storage.local.set({ selectedGPTVersion }, () => {
+          console.log('GPT版本更新为:', selectedGPTVersion);
+      });
+  });
+
+  // 创建 GPT-4 按钮
+  const gpt4Button = document.createElement('button');
+  gpt4Button.textContent = '使用 GPT-4';
+  gpt4Button.className = 'gpt-version-button';
+  gpt4Button.addEventListener('click', () => {
+      selectedGPTVersion = 'gpt4';
+      chrome.storage.local.set({ selectedGPTVersion }, () => {
+          console.log('GPT版本更新为:', selectedGPTVersion);
+      });
+  });
+
+  // 将按钮添加到 content 的顶部
+  content.appendChild(gpt3Button);
+  content.appendChild(gpt4Button);
+
+  // 从本地存储中加载选择的 GPT 版本
+  chrome.storage.local.get(['selectedGPTVersion'], (result) => {
+      if (result.selectedGPTVersion) {
+          selectedGPTVersion = result.selectedGPTVersion;
+          console.log('加载的 GPT 版本为:', selectedGPTVersion);
+      }
+  });
+}
+
 window.onload = () => {
   document.body.appendChild(customTooltip); 
   initEventHandlers();  // Initialize event handlers
@@ -74,12 +119,27 @@ function createReferenceSidebar() {
   svg.appendChild(path);
   button.appendChild(svg);
 
+  const btncontainer = document.createElement('div');
+  btncontainer.className = 'reference-sidebar-btncontainer';
+
+  const gpt3Button = document.createElement('button');
+  gpt3Button.textContent = 'GPT-3.5';
+  gpt3Button.className = 'gpt-version-btn';
+
+  const gpt4Button = document.createElement('button');
+  gpt4Button.textContent = 'GPT-4';
+  gpt4Button.className = 'gpt-version-btn';
+
+  btncontainer.appendChild(gpt3Button);
+  btncontainer.appendChild(gpt4Button);
+
   const content = document.createElement('div');
   content.className = 'reference-sidebar-content';
 
   referenceSidebar.appendChild(button);
-  // referenceSidebar.appendChild(createNewRefBtn);
+  //referenceSidebar.appendChild(createNewRefBtn);
   referenceSidebar.appendChild(expandBtn);
+  referenceSidebar.appendChild(btncontainer);
   referenceSidebar.appendChild(content);
 
 
@@ -101,7 +161,6 @@ function createReferenceSidebar() {
       const referenceTexts = document.querySelectorAll('.gpt-reference-text');
 
       referenceTexts.forEach(refText => {
-        // 处理之前的省略号，避免多次添加'...'
         let originalContent = refText.closest('.gpt-reference-container').querySelector('.gpt-reference-text2').textContent.trim();
         
         if (referenceSidebar.classList.contains('wide')) {

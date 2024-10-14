@@ -33,6 +33,7 @@ function resetReferenceCheckboxes() {
 
 // Add content to reference sidebar
 function addToReferenceSidebar(event) {
+    summariseGptResponseToGenerateReference(event);
     const gptResponse = event.target.closest('article[data-testid^="conversation-turn-"]');
     if (!gptResponse) return;
 
@@ -72,7 +73,6 @@ function saveReferenceToLocalStorage(content, title) {
         } else {
             storedReferences.push({ content: content.trim(), title: title, checked: false });
             chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
-                console.log('New reference added to local storage:', content);
                 updateReferenceSidebar(storedReferences);
             });
         }

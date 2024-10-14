@@ -44,8 +44,6 @@ function addToReferenceSidebar(event) {
     const refSidebar = document.querySelector('.reference-sidebar-content');
     if (!refSidebar || isDuplicateOrMax(refSidebar, summary)) return;
 
-    const newRef = createReferenceContainer(summary, newTitle);
-    refSidebar.appendChild(newRef);
     saveReferenceToLocalStorage(summary, newTitle);
 }
 
@@ -70,12 +68,23 @@ function saveReferenceToLocalStorage(content, title) {
         if (storedReferences.some(ref => ref.content.trim() === content.trim())) {
             alert('This reference already exists in storage!');
         } else {
-            storedReferences.push({ content: content.trim(), title: title, checked: false });
+            // Add the new reference to the storedReferences array
+            const newReference = { content: content.trim(), title: title};
+            storedReferences.push(newReference);
+
+            // Update local storage with the new reference
             chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
-                updateReferenceSidebar(storedReferences);
+                // Append only the new reference to the sidebar
+                appendNewReferenceToSidebar(newReference, storedReferences.length - 1);
             });
         }
     });
+}
+
+function appendNewReferenceToSidebar(newReference, index) {
+    const sidebarContent = document.querySelector('.reference-sidebar-content');
+    // Append only the newly created reference container
+    sidebarContent.appendChild(createReferenceContainer(newReference.content, newReference.title, index));
 }
 
 // Update sidebar with references from local storage
@@ -84,7 +93,7 @@ function updateReferenceSidebar(storedReferences) {
     sidebarContent.innerHTML = '';  // Clear existing content
 
     storedReferences.forEach((ref, index) => {
-        sidebarContent.appendChild(createReferenceContainer(ref.content,ref.title, index));
+        sidebarContent.appendChild(createReferenceContainer(ref.content, ref.title, index));
     });
 }
 
@@ -110,6 +119,7 @@ function createReferenceContainer(content,titleText, index = null) {
     checkbox.type = 'checkbox';
     checkbox.name = 'gpt-reference-checkbox';
     checkbox.className = 'gpt-reference-checkbox';
+    checkbox.isChecked = false;
 
     const editTitleBtn = document.createElement('button');
     editTitleBtn.className = 'gpt-reference-edit-title-btn';
@@ -146,7 +156,6 @@ function createReferenceContainer(content,titleText, index = null) {
     container.append(header, newRefText, hiddenRefText);
 
     if (index !== null) {
-        checkbox.checked = false;
         checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
         deleteBtn.addEventListener('click', () => removeReference(index));
         editTitleBtn.addEventListener('click', () => editReferenceTitle(title, index));

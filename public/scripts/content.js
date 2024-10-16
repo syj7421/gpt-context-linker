@@ -105,9 +105,9 @@ function createReferenceSidebar() {
         let originalContent = refText.closest('.gpt-reference-container').querySelector('.gpt-reference-text2').textContent.trim();
         
         if (referenceSidebar.classList.contains('wide')) {
-          refText.textContent = originalContent.slice(0, 500) + (originalContent.length > 300 ? '...' : '');
+          refText.textContent = originalContent.slice(0, 85) + (originalContent.length > 85 ? '...' : '');
         } else {
-          refText.textContent = originalContent.slice(0, 50) + (originalContent.length > 50 ? '...' : '');
+          refText.textContent = originalContent.slice(0, 30) + (originalContent.length > 30 ? '...' : '');
         }
       });
     }

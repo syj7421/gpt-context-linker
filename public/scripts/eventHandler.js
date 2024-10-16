@@ -16,8 +16,10 @@ function handleClickEvent(event) {
         resetReferenceCheckboxes();
     }else if (target.closest('button[name="reference-detail-btn"]')) {
         const referenceContainer = target.closest('.gpt-reference-container');
+        const title = referenceContainer.querySelector('.gpt-reference-header').textContent;
+        console.log(title);
         const content = referenceContainer.querySelector('.gpt-reference-text2').textContent;
-        showPopup(content);
+        showPopup(title, content);
     }
 }
 
@@ -102,7 +104,7 @@ function updateReferenceSidebar(storedReferences) {
 }
 
 // 显示弹出窗口的函数
-function showPopup(content) {
+function showPopup(title, content) {
     console.log(111111)
     // 创建一个遮罩层来覆盖其他内容
     const overlay = document.createElement('div');
@@ -116,41 +118,70 @@ function showPopup(content) {
 
     // 创建弹出窗口
     const popup = document.createElement('div');
-    popup.style.position = 'fixed';
-    popup.style.top = '50%';
-    popup.style.left = '50%';
-    popup.style.transform = 'translate(-50%, -50%)';
-    popup.style.width = '50%';
-    popup.style.maxHeight = '80%'; // 限制高度，确保可以滚动
-    popup.style.backgroundColor = 'white';
-    popup.style.padding = '20px';
-    popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-    popup.style.zIndex = '9999'; // 确保弹窗位于遮罩层之上
-    popup.style.overflowY = 'auto'; // 允许内容滚动
+    popup.className = 'popup-frame';
+
+    const popupHeader =  document.createElement('div');
+    popupHeader.className = "popup-header";
+
+    const popupTitle =  document.createElement('div');
+    popupTitle.textContent = title;
+    popupTitle.className = "popup-title";
 
     // 创建关闭按钮
     const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
-    closeButton.style.position = 'absolute';
-    closeButton.style.top = '10px';
-    closeButton.style.right = '10px';
-    closeButton.style.padding = '5px 10px';
+    closeButton.className = 'popup-closebtn';
+    closeButton.textContent = 'X';
     closeButton.style.cursor = 'pointer';
+
+    popupHeader.appendChild(popupTitle);
+    popupHeader.appendChild(closeButton);
     
     closeButton.addEventListener('click', () => {
         document.body.removeChild(overlay); // 移除遮罩层和弹窗
     });
 
-    const cleanContent = content.replace(/^ChatGPT said:Create a reference to this/, '').trim();
+    const controlBar = document.createElement('div');
+    controlBar.className = 'popup-controlBar';
+
+    const controlBarBtn = document.createElement('button');
+    controlBarBtn.className = 'popup-controlBar-btn';
+    controlBarBtn.textContent = 'XXXXXXX';
+
+    const controlBarBtn2 = document.createElement('button');
+    controlBarBtn2.className = 'popup-controlBar-btn';
+    controlBarBtn2.textContent = 'XXXXXXX2';
+
+    controlBar.appendChild(controlBarBtn);
+    controlBar.appendChild(controlBarBtn2);
+
+    const cleanContent = content;
+
+    const Container = document.createElement('div');
+    Container.className = 'popup-container';
+
+    const contentFrame = document.createElement('div');
+    contentFrame.className = 'popup-content-frame';
 
     // 创建内容容器
     const contentContainer = document.createElement('div');
+    contentContainer.className = 'popup-container-content';
     contentContainer.style.whiteSpace = 'pre-wrap'; // 保留换行
     contentContainer.textContent = cleanContent; // 填充详细内容
 
+    const editBtn = document.createElement('button');
+    editBtn.className = 'popup-edit-btn';
+    editBtn.textContent = 'Edit Content';
+
+    contentFrame.appendChild(contentContainer);
+    contentFrame.appendChild(editBtn);
+
+
+    Container.appendChild(controlBar);
+    Container.appendChild(contentFrame);
+
     // 将关闭按钮和内容添加到弹出窗口
-    popup.appendChild(closeButton);
-    popup.appendChild(contentContainer);
+    popup.appendChild(popupHeader);
+    popup.appendChild(Container);
 
     // 将遮罩层和弹出窗口添加到页面中
     overlay.appendChild(popup);
@@ -200,11 +231,13 @@ function createReferenceContainer(content,titleText, index = null) {
     deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`;
 
-    const cleanContent = content.replace(/^ChatGPT said:Create a reference to this/, '').trim();
+    const cleanContent = content.replace(/^type:\s*text\s*content:\s*>-\s*ChatGPT\s*said:\s*ChatGPT Create\s*a\s*reference\s*to\s*this\s*/im, '').trim();
+
+
 
     const newRefText = document.createElement('span');
     newRefText.className = 'gpt-reference-text';
-    newRefText.textContent = cleanContent.slice(0, 50) + (cleanContent.length > 50 ? '...' : '');;
+    newRefText.textContent = cleanContent.slice(0, 35) + (cleanContent.length > 35 ? '...' : '');;
     
     const hiddenRefText = document.createElement('span');
     hiddenRefText.className = 'gpt-reference-text2';
@@ -225,21 +258,21 @@ function createReferenceContainer(content,titleText, index = null) {
         checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
         deleteBtn.addEventListener('click', () => removeReference(index));
         editTitleBtn.addEventListener('click', () => editReferenceTitle(title, index));
-        newRefText.addEventListener('mouseover', (event) => {
-            customTooltip.style.display = 'block';
-            customTooltip.innerText = content; 
-            customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
-            customTooltip.style.top = `${event.clientY + 10}px`;   
-        });
+        // newRefText.addEventListener('mouseover', (event) => {
+        //     customTooltip.style.display = 'block';
+        //     customTooltip.innerText = content; 
+        //     customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
+        //     customTooltip.style.top = `${event.clientY + 10}px`;   
+        // });
         
-        newRefText.addEventListener('mousemove', (event) => {
-            customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
-            customTooltip.style.top = `${event.clientY + 10}px`;
-        });
+        // newRefText.addEventListener('mousemove', (event) => {
+        //     customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
+        //     customTooltip.style.top = `${event.clientY + 10}px`;
+        // });
         
-        newRefText.addEventListener('mouseout', () => {
-            customTooltip.style.display = 'none';  
-        });
+        // newRefText.addEventListener('mouseout', () => {
+        //     customTooltip.style.display = 'none';  
+        // });
         
     }
 

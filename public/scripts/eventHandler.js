@@ -151,14 +151,8 @@ function showPopup(title, content) {
     controlBarBtn2.className = 'popup-controlBar-btn';
     controlBarBtn2.textContent = 'XXXXXXX2';
 
-<<<<<<< Updated upstream
-    controlBar.appendChild(controlBarBtn);
-    controlBar.appendChild(controlBarBtn2);
-
     const cleanContent = content;
 
-=======
->>>>>>> Stashed changes
     const Container = document.createElement('div');
     Container.className = 'popup-container';
 
@@ -174,6 +168,38 @@ function showPopup(title, content) {
     const editBtn = document.createElement('button');
     editBtn.className = 'popup-edit-btn';
     editBtn.textContent = 'Edit Content';
+
+    // Flag to track whether we are in edit mode or not
+    let isEditMode = false;
+    // Add event listener to the Edit Content button
+    editBtn.addEventListener('click', () => {
+        if (!isEditMode) {
+            // Enable edit mode
+            contentContainer.setAttribute('contenteditable', 'true');
+            contentContainer.classList.add('edit-mode'); // Optional, for visual feedback
+            editBtn.textContent = 'Save Change';  // Change button text to 'Save'
+            isEditMode = true;
+        } else {
+            // Save changes and disable edit mode
+            const updatedContent = contentContainer.textContent.trim();
+            contentContainer.setAttribute('contenteditable', 'false');
+            contentContainer.classList.remove('edit-mode');
+            editBtn.textContent = 'Edit Content';  // Change button text back to 'Edit'
+            isEditMode = false;
+
+            // Save the updated content in chrome.storage.local
+            chrome.storage.local.set({ 'popupContent': updatedContent }, () => {
+                console.log('Content saved to chrome local storage:', updatedContent);
+            });
+        }
+    });
+
+    // Load the saved content from chrome local storage when popup is initialized
+    chrome.storage.local.get('popupContent', (result) => {
+        if (result.popupContent) {
+            contentContainer.textContent = result.popupContent;  // Load saved content
+        }
+    });
 
     contentFrame.appendChild(contentContainer);
     contentFrame.appendChild(editBtn);

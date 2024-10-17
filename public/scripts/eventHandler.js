@@ -151,11 +151,14 @@ function showPopup(title, content) {
     controlBarBtn2.className = 'popup-controlBar-btn';
     controlBarBtn2.textContent = 'XXXXXXX2';
 
+<<<<<<< Updated upstream
     controlBar.appendChild(controlBarBtn);
     controlBar.appendChild(controlBarBtn2);
 
     const cleanContent = content;
 
+=======
+>>>>>>> Stashed changes
     const Container = document.createElement('div');
     Container.className = 'popup-container';
 

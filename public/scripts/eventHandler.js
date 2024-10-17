@@ -14,7 +14,7 @@ function handleClickEvent(event) {
         addToReferenceSidebar(event);
     } else if (target.closest('button[data-testid="send-button"]') || target.closest('nav')) {
         resetReferenceCheckboxes();
-    }else if (target.closest('button[name="reference-detail-btn"]')) {
+    } else if (target.closest('button[name="reference-detail-btn"]')) {
         const referenceContainer = target.closest('.gpt-reference-container');
         const title = referenceContainer.querySelector('.gpt-reference-header').textContent;
         console.log(title);
@@ -46,7 +46,7 @@ function addToReferenceSidebar(event) {
 
     const newTitle = "New reference";
     const summary = summariseGptResponseToGenerateReference(event);
-    
+
     const refSidebar = document.querySelector('.reference-sidebar-content');
     if (!refSidebar || isDuplicateOrMax(refSidebar, summary)) return;
 
@@ -75,7 +75,7 @@ function saveReferenceToLocalStorage(content, title) {
             alert('This reference already exists in storage!');
         } else {
             // Add the new reference to the storedReferences array
-            const newReference = { content: content.trim(), title: title};
+            const newReference = { content: content.trim(), title: title };
             storedReferences.push(newReference);
 
             // Update local storage with the new reference
@@ -120,10 +120,10 @@ function showPopup(title, content) {
     const popup = document.createElement('div');
     popup.className = 'popup-frame';
 
-    const popupHeader =  document.createElement('div');
+    const popupHeader = document.createElement('div');
     popupHeader.className = "popup-header";
 
-    const popupTitle =  document.createElement('div');
+    const popupTitle = document.createElement('div');
     popupTitle.textContent = title;
     popupTitle.className = "popup-title";
 
@@ -135,7 +135,7 @@ function showPopup(title, content) {
 
     popupHeader.appendChild(popupTitle);
     popupHeader.appendChild(closeButton);
-    
+
     closeButton.addEventListener('click', () => {
         document.body.removeChild(overlay); // 移除遮罩层和弹窗
     });
@@ -154,8 +154,6 @@ function showPopup(title, content) {
     controlBar.appendChild(controlBarBtn);
     controlBar.appendChild(controlBarBtn2);
 
-    const cleanContent = content;
-
     const Container = document.createElement('div');
     Container.className = 'popup-container';
 
@@ -166,11 +164,44 @@ function showPopup(title, content) {
     const contentContainer = document.createElement('div');
     contentContainer.className = 'popup-container-content';
     contentContainer.style.whiteSpace = 'pre-wrap'; // 保留换行
-    contentContainer.textContent = cleanContent; // 填充详细内容
+    contentContainer.textContent = content;
 
     const editBtn = document.createElement('button');
     editBtn.className = 'popup-edit-btn';
     editBtn.textContent = 'Edit Content';
+
+
+    // Flag to track whether we are in edit mode or not
+    let isEditMode = false;
+    // Add event listener to the Edit Content button
+    editBtn.addEventListener('click', () => {
+        if (!isEditMode) {
+            // Enable edit mode
+            contentContainer.setAttribute('contenteditable', 'true');
+            contentContainer.classList.add('edit-mode'); // Optional, for visual feedback
+            editBtn.textContent = 'Save Change';  // Change button text to 'Save'
+            isEditMode = true;
+        } else {
+            // Save changes and disable edit mode
+            const updatedContent = contentContainer.textContent.trim();
+            contentContainer.setAttribute('contenteditable', 'false');
+            contentContainer.classList.remove('edit-mode');
+            editBtn.textContent = 'Edit Content';  // Change button text back to 'Edit'
+            isEditMode = false;
+
+            // Save the updated content in chrome.storage.local
+            chrome.storage.local.set({ 'popupContent': updatedContent }, () => {
+                console.log('Content saved to chrome local storage:', updatedContent);
+            });
+        }
+    });
+
+    // Load the saved content from chrome local storage when popup is initialized
+    chrome.storage.local.get('popupContent', (result) => {
+        if (result.popupContent) {
+            contentContainer.textContent = result.popupContent;  // Load saved content
+        }
+    });
 
     contentFrame.appendChild(contentContainer);
     contentFrame.appendChild(editBtn);
@@ -190,7 +221,7 @@ function showPopup(title, content) {
 
 
 // Create a reference container
-function createReferenceContainer(content,titleText, index = null) {
+function createReferenceContainer(content, titleText, index = null) {
     const container = document.createElement('div');
     container.className = 'gpt-reference-container';
 
@@ -199,7 +230,7 @@ function createReferenceContainer(content,titleText, index = null) {
 
     const headerLeft = document.createElement('div');
     headerLeft.className = 'gpt-reference-header-left';
-    
+
     const headerRight = document.createElement('div');
     headerRight.className = 'gpt-reference-header-right';
 
@@ -226,19 +257,17 @@ function createReferenceContainer(content,titleText, index = null) {
       </g>
     </svg>
   `;
-  
+
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`;
 
     const cleanContent = content.replace(/^type:\s*text\s*content:\s*>-\s*ChatGPT\s*said:\s*ChatGPT Create\s*a\s*reference\s*to\s*this\s*/im, '').trim();
 
-
-
     const newRefText = document.createElement('span');
     newRefText.className = 'gpt-reference-text';
     newRefText.textContent = cleanContent.slice(0, 35) + (cleanContent.length > 35 ? '...' : '');;
-    
+
     const hiddenRefText = document.createElement('span');
     hiddenRefText.className = 'gpt-reference-text2';
     hiddenRefText.textContent = cleanContent;
@@ -264,16 +293,16 @@ function createReferenceContainer(content,titleText, index = null) {
         //     customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
         //     customTooltip.style.top = `${event.clientY + 10}px`;   
         // });
-        
+
         // newRefText.addEventListener('mousemove', (event) => {
         //     customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
         //     customTooltip.style.top = `${event.clientY + 10}px`;
         // });
-        
+
         // newRefText.addEventListener('mouseout', () => {
         //     customTooltip.style.display = 'none';  
         // });
-        
+
     }
 
     return container;
@@ -337,15 +366,15 @@ function removeReference(index) {
     // Get current stored references from Chrome local storage
     chrome.storage.local.get([STORAGE_KEY], (result) => {
         let storedReferences = result[STORAGE_KEY] || [];
-        
+
         // Remove the reference at the given index
         if (index >= 0 && index < storedReferences.length) {
             storedReferences.splice(index, 1);
-            
+
             // Update the storage with the new list of references
             chrome.storage.local.set({ [STORAGE_KEY]: storedReferences }, () => {
                 console.log('Reference removed from local storage:', index);
-                
+
                 // Refresh the reference sidebar to reflect the removed reference
                 updateReferenceSidebar(storedReferences);
             });
@@ -366,10 +395,10 @@ function editReferenceTitle(title, index) {
         if (updatedTitle.length > 15) {
             updatedTitle = updatedTitle.slice(0, 15);  // Truncate excess characters
         }
-        
+
         title.innerText = updatedTitle;  // Update displayed title
         title.contentEditable = 'false';  // Disable edit mode after saving
-        
+
         // Update in chrome.storage
         chrome.storage.local.get([STORAGE_KEY], (result) => {
             const storedReferences = result[STORAGE_KEY] || [];

@@ -1,0 +1,10 @@
+1. text replace issue: type: text content: >- ChatGPT said:ChatGPTMemory updated Create a reference to this ...    can't remove the special case like memory updated etc
+
+2. Edit content problem, 
+cannot update the data with index. 
+cannot show the update in the reference bar container
+
+3. update reference container css same as popup, by use vh and vw (will spend plenty times, low priority problem)
+
+
+Publish at this sunday if all can fix

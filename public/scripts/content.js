@@ -5,14 +5,14 @@
 */
 
 /* TODO: 
-1. same text already exist V
-2. ref storage max 10, ref at the same time max 3? V
-3. checkbox reset after submit V
-4. reset checkbox when stream changes V
+V1. same text already exist 
+V2. ref storage max 10, ref at the same time max 3? 
+V3. checkbox reset after submit 
+V4. reset checkbox when stream changes 
 5. what if the user manaully deletes the reference part? <-- allow them to do that
 6. what if the reference is deleted from the sidebar?
-7. remove Chat GPT said prefix, and other unnecessary things
-9. double finger slide in mac
+P7. remove Chat GPT said prefix, and other unnecessary things 
+8. double finger slide in mac
 10. still being added after warning
 11. cursor move after reference
 12. checkboxes reset after adding new reference to reference sidebar

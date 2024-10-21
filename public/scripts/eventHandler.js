@@ -411,4 +411,8 @@ function editReferenceTitle(title, index) {
     });
 }
 
-
+// Detect navigating back/forward in history
+window.addEventListener('popstate', (event) => {
+    console.log('Navigated back or forward in history');
+    resetReferenceCheckboxes();
+  });

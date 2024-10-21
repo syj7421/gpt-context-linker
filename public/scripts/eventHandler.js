@@ -105,7 +105,6 @@ function updateReferenceSidebar(storedReferences) {
 
 // 显示弹出窗口的函数
 function showPopup(title, content) {
-    console.log(111111)
     // 创建一个遮罩层来覆盖其他内容
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';

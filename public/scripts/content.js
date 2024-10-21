@@ -5,17 +5,13 @@
 */
 
 /* TODO: 
-2. same text already exist V <-- doesn't really work for long 
-3. ref storage max 10, ref at the same time max 3? V
-4. checkbox reset after submit V
-5. also when the stream changes *** or reset checkbox when stream changes V
-5a: what if the user manaully deletes the reference part? <-- maybe block all the deletion, but allow other modification
-5b: what if the reference if deleted from the sidebar?
-6. remove Chat GPT said prefix , lots of errors in const msgElements = gptResponse.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img, code, li');
-   especially, img, code, laTex(span tag), also did not include table, or any other value
-   - definitely more effective way to store a gpt response, best to remove redundant parts, some eror with "same text already exist as well maybe relate to this?"
-7. Local storage / Sync? 
-8. UI/UX
+1. same text already exist V
+2. ref storage max 10, ref at the same time max 3? V
+3. checkbox reset after submit V
+4. reset checkbox when stream changes V
+5. what if the user manaully deletes the reference part? <-- allow them to do that
+6. what if the reference is deleted from the sidebar?
+7. remove Chat GPT said prefix, and other unnecessary things
 9. double finger slide in mac
 10. still being added after warning
 11. cursor move after reference
@@ -23,7 +19,7 @@
 13. new responses has no button attached
 14. clicking on delete reset checkboxes
 15. reference still added after max 3 alert, possibly only on the visual side tho
-
+16. checkbox reset when delete any
 */
 
 const STORAGE_KEY = 'gptReferences';

@@ -12,14 +12,10 @@ V4. reset checkbox when stream changes
 5. what if the user manaully deletes the reference part? <-- allow them to do that
 6. what if the reference is deleted from the sidebar?
 P7. remove Chat GPT said prefix, and other unnecessary things 
-8. double finger slide in mac
-10. still being added after warning
-11. cursor move after reference
-12. checkboxes reset after adding new reference to reference sidebar
-13. new responses has no button attached
-14. clicking on delete reset checkboxes
-15. reference still added after max 3 alert, possibly only on the visual side tho
-16. checkbox reset when delete any
+V8. double finger slide in mac
+V9. cursor move after reference
+V10. checkboxes reset after adding new reference to reference sidebar
+11. clicking on delete reset checkboxes
 */
 
 const STORAGE_KEY = 'gptReferences';

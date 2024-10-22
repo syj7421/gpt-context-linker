@@ -93,13 +93,42 @@ function appendNewReferenceToSidebar(newReference, index) {
     sidebarContent.appendChild(createReferenceContainer(newReference.content, newReference.title, index));
 }
 
-// Update sidebar with references from local storage
-function updateReferenceSidebar(storedReferences) {
+function updateReferenceSidebar(storedReferences, deletedIndex = null) {
     const sidebarContent = document.querySelector('.reference-sidebar-content');
-    sidebarContent.innerHTML = '';  // Clear existing content
+    
+    // Store the checkbox states before clearing the content
+    const checkboxStates = {};
+    sidebarContent.querySelectorAll('.gpt-reference-checkbox').forEach((checkbox) => {
+        let refIndex = parseInt(checkbox.getAttribute('data-index'), 10);
 
+        // Store the checked state, but skip the deleted reference
+        if (refIndex !== deletedIndex) {
+            if (deletedIndex !== null && refIndex > deletedIndex) {
+                // Adjust the index if it's after the deleted one
+                refIndex -= 1;
+            }
+            checkboxStates[refIndex] = checkbox.checked;
+        }
+    });
+    
+    console.log('Stored checkbox states:', checkboxStates);
+
+    // Clear existing content
+    sidebarContent.innerHTML = '';  
+
+    // Re-render references and reapply checkbox states
     storedReferences.forEach((ref, index) => {
-        sidebarContent.appendChild(createReferenceContainer(ref.content, ref.title, index));
+        const referenceElement = createReferenceContainer(ref.content, ref.title, index);
+        referenceElement.setAttribute('data-index', index);  // Assign a unique identifier
+        
+        const checkbox = referenceElement.querySelector('.gpt-reference-checkbox');
+        
+        // Reapply the saved checkbox state (if it exists)
+        if (checkbox && checkboxStates[index] !== undefined) {
+            checkbox.checked = checkboxStates[index];
+        }
+
+        sidebarContent.appendChild(referenceElement);
     });
 }
 
@@ -218,7 +247,7 @@ function showPopup(title, content) {
 
 
 // Create a reference container
-function createReferenceContainer(content,titleText, index = null) {
+function createReferenceContainer(content, titleText, index = null) {
     const container = document.createElement('div');
     container.className = 'gpt-reference-container';
 
@@ -239,7 +268,7 @@ function createReferenceContainer(content,titleText, index = null) {
     checkbox.type = 'checkbox';
     checkbox.name = 'gpt-reference-checkbox';
     checkbox.className = 'gpt-reference-checkbox';
-    checkbox.isChecked = false;
+    checkbox.setAttribute('data-index', index); // Set data-index here
 
     const editTitleBtn = document.createElement('button');
     editTitleBtn.className = 'gpt-reference-edit-title-btn';
@@ -252,16 +281,13 @@ function createReferenceContainer(content,titleText, index = null) {
         <path d="M11 9H4C2.89543 9 2 9.89543 2 11V15H11" stroke="#33363F" stroke-width="2"></path>
         <path d="M17 15H20C21.1046 15 22 14.1046 22 13V9H17" stroke="#33363F" stroke-width="2"></path>
       </g>
-    </svg>
-  `;
+    </svg>`;
   
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'gpt-reference-delete-btn';
     deleteBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`;
 
     const cleanContent = content.replace(/^type:\s*text\s*content:\s*>-\s*ChatGPT\s*said:\s*ChatGPT Create\s*a\s*reference\s*to\s*this\s*/im, '').trim();
-
-
 
     const newRefText = document.createElement('span');
     newRefText.className = 'gpt-reference-text';
@@ -275,7 +301,7 @@ function createReferenceContainer(content,titleText, index = null) {
     const referenceDetailBtn = document.createElement('button');
     referenceDetailBtn.name = 'reference-detail-btn'
     referenceDetailBtn.className = 'reference-detail-btn';
-    referenceDetailBtn.innerHTML = 'More Detail'
+    referenceDetailBtn.innerHTML = 'More Detail';
 
     headerLeft.append(checkbox, title);
     headerRight.append(editTitleBtn, deleteBtn);
@@ -286,26 +312,11 @@ function createReferenceContainer(content,titleText, index = null) {
         checkbox.addEventListener('change', () => insertReferenceToInputWhenCheckboxChecked(index));
         deleteBtn.addEventListener('click', () => removeReference(index));
         editTitleBtn.addEventListener('click', () => editReferenceTitle(title, index));
-        // newRefText.addEventListener('mouseover', (event) => {
-        //     customTooltip.style.display = 'block';
-        //     customTooltip.innerText = content; 
-        //     customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
-        //     customTooltip.style.top = `${event.clientY + 10}px`;   
-        // });
-        
-        // newRefText.addEventListener('mousemove', (event) => {
-        //     customTooltip.style.left = `${event.clientX - customTooltip.offsetWidth - 10}px`;  
-        //     customTooltip.style.top = `${event.clientY + 10}px`;
-        // });
-        
-        // newRefText.addEventListener('mouseout', () => {
-        //     customTooltip.style.display = 'none';  
-        // });
-        
     }
 
     return container;
 }
+
 
 // Insert reference to the input when checkbox is checked
 function insertReferenceToInputWhenCheckboxChecked(nthCheckbox) {
@@ -358,7 +369,6 @@ function insertReferenceToInputWhenCheckboxChecked(nthCheckbox) {
     selection.addRange(range);
 }
 
-// Remove reference by index and update local storage and sidebar
 function removeReference(index) {
     if (!chrome?.storage?.local) return console.warn('Chrome storage API is not available.');
 
@@ -375,7 +385,7 @@ function removeReference(index) {
                 console.log('Reference removed from local storage:', index);
                 
                 // Refresh the reference sidebar to reflect the removed reference
-                updateReferenceSidebar(storedReferences);
+                updateReferenceSidebar(storedReferences, index);
             });
         }
     });

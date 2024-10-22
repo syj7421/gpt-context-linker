@@ -18,7 +18,6 @@ function summariseGptResponseToGenerateReference(event) {
     let yamlSummary = jsyaml.dump(summary);
     
     // Log or return the YAML summary
-    console.log(yamlSummary);
     return yamlSummary;
 }
 // Helper function to extract summary from the GPT response
@@ -34,7 +33,6 @@ function extractSummaryFromGPTResponse(element) {
     else if (element.nodeType === Node.TEXT_NODE) {
         let trimmedText = element.nodeValue.replace(/\s+/g, ' ').trim();
         if (trimmedText) {
-            console.log("Extracting text node:", trimmedText);  // Log text extraction
             return {
                 type: "text",
                 content: trimmedText

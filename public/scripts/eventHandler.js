@@ -17,9 +17,9 @@ function handleClickEvent(event) {
     }else if (target.closest('button[name="reference-detail-btn"]')) {
         const referenceContainer = target.closest('.gpt-reference-container');
         const title = referenceContainer.querySelector('.gpt-reference-header').textContent;
-        console.log(title);
         const content = referenceContainer.querySelector('.gpt-reference-text2').textContent;
-        showPopup(title, content);
+        const index = referenceContainer.querySelector('.gpt-reference-checkbox').getAttribute('data-index');
+        showPopup(title, content, index);
     }
 }
 
@@ -65,17 +65,31 @@ function isDuplicateOrMax(refSidebar, newContent) {
     return maxReached || duplicate;
 }
 
+function cleanContent(content) {
+    // 移除 "type: text" 和 "type: code" 等标记，以及 "content:" 前缀
+    const cleanedContent = content
+        .replace(/type\s*:\s*(text|code)\s*/gi, '') // 移除 "type: text" 和 "type: code"
+        .replace(/content\s*:\s*/gi, '') // 移除 "content:" 前缀
+        .replace(/-+/g, ''); // 移除多余的 "-"
+
+    // 合并多余的换行符，并返回清理后的内容
+    return cleanedContent.replace(/\s*\n\s*/g, ' ').trim(); // 将换行替换为空格并去除首尾空白
+}
+
+
 // Save reference to local storage
 function saveReferenceToLocalStorage(content, title) {
     if (!chrome?.storage?.local) return console.warn('Chrome storage API is not available.');
 
+    const cleanedContent = cleanContent(content);
+
     chrome.storage.local.get([STORAGE_KEY], (result) => {
         const storedReferences = result[STORAGE_KEY] || [];
-        if (storedReferences.some(ref => ref.content.trim() === content.trim())) {
+        if (storedReferences.some(ref => ref.content.trim() === cleanedContent.trim())) {
             alert('This reference already exists in storage!');
         } else {
             // Add the new reference to the storedReferences array
-            const newReference = { content: content.trim(), title: title};
+            const newReference = { content: cleanedContent.trim(), title: title};
             storedReferences.push(newReference);
 
             // Update local storage with the new reference
@@ -133,7 +147,7 @@ function updateReferenceSidebar(storedReferences, deletedIndex = null) {
 }
 
 // 显示弹出窗口的函数
-function showPopup(title, content) {
+function showPopup(title, content, index) {
     // 创建一个遮罩层来覆盖其他内容
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
@@ -216,16 +230,25 @@ function showPopup(title, content) {
             isEditMode = false;
 
             // Save the updated content in chrome.storage.local
-            chrome.storage.local.set({ 'popupContent': updatedContent }, () => {
-                console.log('Content saved to chrome local storage:', updatedContent);
+            chrome.storage.local.get(['gptReferences'], (result) => {
+                const storedReferences = result.gptReferences || [];
+                if (index >= 0 && index < storedReferences.length) {
+                    storedReferences[index].content = updatedContent;
+                    chrome.storage.local.set({ 'gptReferences': storedReferences }, () => {
+                        console.log('Content saved to chrome local storage:', updatedContent);
+                        refreshReferenceContainer();
+                    });
+                }
             });
         }
     });
 
     // Load the saved content from chrome local storage when popup is initialized
-    chrome.storage.local.get('popupContent', (result) => {
-        if (result.popupContent) {
-            contentContainer.textContent = result.popupContent;  // Load saved content
+    chrome.storage.local.get(['gptReferences'], (result) => {
+        const storedReferences = result.gptReferences || [];
+        if (index >= 0 && index < storedReferences.length) {
+            contentContainer.textContent = storedReferences[index].content;
+            refreshReferenceContainer();
         }
     });
 
@@ -243,6 +266,25 @@ function showPopup(title, content) {
     // 将遮罩层和弹出窗口添加到页面中
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
+}
+
+function refreshReferenceContainer() {
+    // 获取 reference container 的 DOM 元素
+    const referenceContainer = document.querySelector('.reference-sidebar-content');
+    if (!referenceContainer) return; // 确保找到该容器
+
+    // 从 chrome.storage.local 获取最新的参考数据
+    chrome.storage.local.get([STORAGE_KEY], (result) => {
+        const storedReferences = result[STORAGE_KEY] || [];
+
+        // 清空现有的内容
+        referenceContainer.innerHTML = '';
+
+        // 重新生成并添加新的引用内容
+        storedReferences.forEach((ref, index) => {
+            referenceContainer.appendChild(createReferenceContainer(ref.content, ref.title, index));
+        });
+    });
 }
 
 

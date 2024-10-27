@@ -479,8 +479,6 @@ function editReferenceTitle(title, index) {
     title.addEventListener('blur', onBlur);
     title.addEventListener('keypress', onKeyPress);
 
-    // Save changes when the edit button is clicked again
-    editButton.addEventListener('click', saveChanges);
 }
 
 // Detect navigating back/forward in history

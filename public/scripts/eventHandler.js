@@ -436,10 +436,11 @@ function removeReference(index) {
 function editReferenceTitle(title, index) {
     // Make the title editable
     title.contentEditable = 'true';
+    title.style.backgroundColor = 'hsla(0, 0%, 94%, .9)';
     title.focus();  // Focus on the title for editing
 
     // Save the changes when the user clicks outside (blur event)
-    title.addEventListener('blur', function onBlur() {
+    function saveChanges() {
         let updatedTitle = title.innerText.trim();
 
         // Limit the title length to 15 characters
@@ -449,6 +450,7 @@ function editReferenceTitle(title, index) {
         
         title.innerText = updatedTitle;  // Update displayed title
         title.contentEditable = 'false';  // Disable edit mode after saving
+        title.style.backgroundColor = 'transparent';
         
         // Update in chrome.storage
         chrome.storage.local.get([STORAGE_KEY], (result) => {
@@ -460,7 +462,25 @@ function editReferenceTitle(title, index) {
         });
 
         title.removeEventListener('blur', onBlur);  // Remove blur event listener after saving
-    });
+        title.removeEventListener('keypress', onKeyPress);
+    };
+    function onBlur() {
+        saveChanges();
+    }
+
+    function onKeyPress(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();  // Prevent new line
+            saveChanges();  // Save changes
+        }
+    }
+
+    // Add event listeners
+    title.addEventListener('blur', onBlur);
+    title.addEventListener('keypress', onKeyPress);
+
+    // Save changes when the edit button is clicked again
+    editButton.addEventListener('click', saveChanges);
 }
 
 // Detect navigating back/forward in history

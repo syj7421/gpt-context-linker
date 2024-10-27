@@ -36,6 +36,7 @@
   .gpt-reference-header-left {
     display: flex;
     justify-content: center; /* Center content horizontally */
+    align-items: center; 
   }
   
   /* Right section of the header (e.g., buttons) */
@@ -43,12 +44,14 @@
     display: flex;
     width: 50px; /* Set width for the right section */
     justify-content: space-around; /* Space out the elements inside */
+    align-items: center; 
   }
   
   /* Checkbox inside the reference item */
   .gpt-reference-checkbox {
     display: flex;
     align-items: center; /* Align checkbox vertically */
+    justify-content: center;
     margin-left: 1vh;
   }
   
@@ -64,6 +67,14 @@
     margin-left: 2vh;
     font-weight: bold;
     font-size: 1.5vw;
+  }
+
+  .gpt-reference-delete-btn {
+    margin-right: 1vh;
+  }
+
+  .gpt-reference-edit-title-btn {
+    margin-right: 1vh;
   }
   
   /* Main text content inside the reference */
@@ -81,7 +92,7 @@
 
   .reference-detail-btn {
     position: relative;
-    font-size: 1.5vw;
+    font-size: 1.3vw;
     display: flex;
     justify-content: flex-end;
     padding-right: 1vw;
